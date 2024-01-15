@@ -1,3 +1,35 @@
 ---
 title: "In Class Exercise 2"
+
+format:
+  html:
+    code-fold: true
+    code-summary: "Show the code"
+    
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  
+editor: visual
 ---
+
+## Writing code chunk to load these packages
+
+-   arrow
+
+-   lubridate
+
+-   tidyverse
+
+-   sf
+
+-   tmap
+
+```{r}
+
+pacman::p_load(arrow, lubridate, tidyverse, sf, tmap)
+
+```
+
+## Importing Grab-Posisi Dataset
