@@ -169,6 +169,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#writing-code-chunk-to-load-these-packages" id="toc-writing-code-chunk-to-load-these-packages" class="nav-link active" data-scroll-target="#writing-code-chunk-to-load-these-packages">Writing code chunk to load these packages</a></li>
   <li><a href="#importing-grab-posisi-dataset" id="toc-importing-grab-posisi-dataset" class="nav-link" data-scroll-target="#importing-grab-posisi-dataset">Importing Grab-Posisi Dataset</a></li>
+  <li><a href="#extracting-trip-starting-locations" id="toc-extracting-trip-starting-locations" class="nav-link" data-scroll-target="#extracting-trip-starting-locations">Extracting trip starting locations</a></li>
+  <li><a href="#extracting-trip-ending-locations" id="toc-extracting-trip-ending-locations" class="nav-link" data-scroll-target="#extracting-trip-ending-locations">Extracting trip ending locations</a></li>
+  <li><a href="#after-all-the-data-manipulation-and-getting-the-data-we-want-we-add-the-eval-false-code-chunk-into-our-code-to-not-run-the-code-when-ever-we" id="toc-after-all-the-data-manipulation-and-getting-the-data-we-want-we-add-the-eval-false-code-chunk-into-our-code-to-not-run-the-code-when-ever-we" class="nav-link" data-scroll-target="#after-all-the-data-manipulation-and-getting-the-data-we-want-we-add-the-eval-false-code-chunk-into-our-code-to-not-run-the-code-when-ever-we">After all the data manipulation and getting the data we want, we add the ” #| eval” False ” code chunk into our code to not run the code when ever we</a>
+  <ul class="collapse">
+  <li><a href="#write-the-files-that-we-created-into-our-folders.-saving-it-in-rds-format-is-good-if-you-are-still-working-with-r-as-it-keeps-the-native-r-functions" id="toc-write-the-files-that-we-created-into-our-folders.-saving-it-in-rds-format-is-good-if-you-are-still-working-with-r-as-it-keeps-the-native-r-functions" class="nav-link" data-scroll-target="#write-the-files-that-we-created-into-our-folders.-saving-it-in-rds-format-is-good-if-you-are-still-working-with-r-as-it-keeps-the-native-r-functions">Write the files that we created into our folders. Saving it in rds format is good if you are still working with R as it keeps the native R functions</a></li>
+  <li><a href="#import-data-back-for-reading" id="toc-import-data-back-for-reading" class="nav-link" data-scroll-target="#import-data-back-for-reading">Import Data back for reading</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -210,8 +217,79 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="importing-grab-posisi-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="importing-grab-posisi-dataset">Importing Grab-Posisi Dataset</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_parquet</span>(<span class="st">"data/GrabPosisi/part-00000-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Writing a code chunk to convert the data type of “pingtimestamp” from character to date time</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>pingtimestamp <span class="ot">&lt;-</span> <span class="fu">as_date</span>(df<span class="sc">$</span>pingtimestamp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="extracting-trip-starting-locations" class="level2">
+<h2 class="anchored" data-anchor-id="extracting-trip-starting-locations">Extracting trip starting locations</h2>
+<p>Using the step learned in previous lesson,</p>
+<ul>
+<li><p>Extracting trips’ origin locations.</p></li>
+<li><p>derive three new columns (i.e.&nbsp;variables) for weekday, starting hour and day of the month.</p></li>
+<li><p>name the output tibble date.frame.origin_df</p></li>
+</ul>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>origin_df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(trj_id)<span class="sc">%&gt;%</span> <span class="co">#group by trip id</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(pingtimestamp) <span class="sc">%&gt;%</span> <span class="co">#arrange the pingtimestamp in ascending order</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">==</span><span class="dv">1</span>) <span class="sc">%&gt;%</span> <span class="co">#filter only taking the first row which is the start point (origin)</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">weekday =</span> <span class="fu">wday</span> (pingtimestamp, <span class="at">label=</span><span class="cn">TRUE</span>, <span class="at">abbr=</span><span class="cn">TRUE</span>),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>         </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">start_hr =</span> <span class="fu">factor</span>(<span class="fu">hour</span>(pingtimestamp)),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">day =</span> <span class="fu">factor</span>(<span class="fu">mday</span>(pingtimestamp)))</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(origin_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="extracting-trip-ending-locations" class="level2">
+<h2 class="anchored" data-anchor-id="extracting-trip-ending-locations">Extracting trip ending locations</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>destination_df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(trj_id)<span class="sc">%&gt;%</span> <span class="co">#group by trip id</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(pingtimestamp)) <span class="sc">%&gt;%</span> <span class="co">#arrange the pingtimestamp in descending order</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">==</span><span class="dv">1</span>) <span class="sc">%&gt;%</span> <span class="co">#filter only taking the first row which is the start point (destination)</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">weekday =</span> <span class="fu">wday</span> (pingtimestamp, <span class="at">label=</span><span class="cn">TRUE</span>, <span class="at">abbr=</span><span class="cn">TRUE</span>),</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>         </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">end_hr =</span> <span class="fu">factor</span>(<span class="fu">hour</span>(pingtimestamp)),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">day =</span> <span class="fu">factor</span>(<span class="fu">mday</span>(pingtimestamp)))</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(destination_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="after-all-the-data-manipulation-and-getting-the-data-we-want-we-add-the-eval-false-code-chunk-into-our-code-to-not-run-the-code-when-ever-we" class="level1">
+<h1>After all the data manipulation and getting the data we want, we add the ” #| eval” False ” code chunk into our code to not run the code when ever we</h1>
+<section id="write-the-files-that-we-created-into-our-folders.-saving-it-in-rds-format-is-good-if-you-are-still-working-with-r-as-it-keeps-the-native-r-functions" class="level2">
+<h2 class="anchored" data-anchor-id="write-the-files-that-we-created-into-our-folders.-saving-it-in-rds-format-is-good-if-you-are-still-working-with-r-as-it-keeps-the-native-r-functions">Write the files that we created into our folders. Saving it in rds format is good if you are still working with R as it keeps the native R functions</h2>
+</section>
+<section id="import-data-back-for-reading" class="level2">
+<h2 class="anchored" data-anchor-id="import-data-back-for-reading">Import Data back for reading</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>origin_df <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/origin_df.rds"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>destination_df <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/destination_df.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

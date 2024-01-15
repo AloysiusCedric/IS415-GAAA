@@ -33,3 +33,83 @@ pacman::p_load(arrow, lubridate, tidyverse, sf, tmap)
 ```
 
 ## Importing Grab-Posisi Dataset
+
+```{r}
+#| eval: False
+
+df <- read_parquet("data/GrabPosisi/part-00000-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet")
+
+```
+
+Writing a code chunk to convert the data type of "pingtimestamp" from character to date time
+
+```{r}
+#| eval: False
+
+df$pingtimestamp <- as_date(df$pingtimestamp)
+
+```
+
+## Extracting trip starting locations
+
+Using the step learned in previous lesson,
+
+-   Extracting trips' origin locations.
+
+-   derive three new columns (i.e. variables) for weekday, starting hour and day of the month.
+
+-   name the output tibble date.frame.origin_df
+
+```{r}
+#| eval: False
+origin_df <- df %>%
+  group_by(trj_id)%>% #group by trip id
+  arrange(pingtimestamp) %>% #arrange the pingtimestamp in ascending order
+  filter(row_number()==1) %>% #filter only taking the first row which is the start point (origin)
+  mutate(weekday = wday (pingtimestamp, label=TRUE, abbr=TRUE),
+         
+        start_hr = factor(hour(pingtimestamp)),
+        day = factor(mday(pingtimestamp)))
+
+View(origin_df)
+```
+
+## Extracting trip ending locations
+
+```{r}
+#| eval: False
+
+destination_df <- df %>%
+  group_by(trj_id)%>% #group by trip id
+  arrange(desc(pingtimestamp)) %>% #arrange the pingtimestamp in descending order
+  filter(row_number()==1) %>% #filter only taking the first row which is the start point (destination)
+  mutate(weekday = wday (pingtimestamp, label=TRUE, abbr=TRUE),
+         
+        end_hr = factor(hour(pingtimestamp)),
+        day = factor(mday(pingtimestamp)))
+
+View(destination_df)
+
+```
+
+# After all the data manipulation and getting the data we want, we add the " #\| eval" False " code chunk into our code to not run the code when ever we
+
+## Write the files that we created into our folders. Saving it in rds format is good if you are still working with R as it keeps the native R functions
+
+```{r}
+#| echo: False
+#| eval: False
+
+write_rds(origin_df, "data/rds/origin_df.rds")
+write_rds(origin_df, "data/rds/destination_df.rds")
+
+```
+
+## Import Data back for reading
+
+```{r}
+
+origin_df <- read_rds("data/rds/origin_df.rds")
+destination_df <- read_rds("data/rds/destination_df.rds")
+
+```

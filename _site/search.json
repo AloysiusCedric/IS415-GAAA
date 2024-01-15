@@ -193,6 +193,34 @@
     "href": "In-class_Ex/In-class_Ex02/In-Class_Ex02.html#importing-grab-posisi-dataset",
     "title": "In Class Exercise 2",
     "section": "Importing Grab-Posisi Dataset",
-    "text": "Importing Grab-Posisi Dataset"
+    "text": "Importing Grab-Posisi Dataset\n\n\nCode\ndf &lt;- read_parquet(\"data/GrabPosisi/part-00000-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet\")\n\n\nWriting a code chunk to convert the data type of “pingtimestamp” from character to date time\n\n\nCode\ndf$pingtimestamp &lt;- as_date(df$pingtimestamp)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-Class_Ex02.html#extracting-trip-starting-locations",
+    "href": "In-class_Ex/In-class_Ex02/In-Class_Ex02.html#extracting-trip-starting-locations",
+    "title": "In Class Exercise 2",
+    "section": "Extracting trip starting locations",
+    "text": "Extracting trip starting locations\nUsing the step learned in previous lesson,\n\nExtracting trips’ origin locations.\nderive three new columns (i.e. variables) for weekday, starting hour and day of the month.\nname the output tibble date.frame.origin_df\n\n\n\nCode\norigin_df &lt;- df %&gt;%\n  group_by(trj_id)%&gt;% #group by trip id\n  arrange(pingtimestamp) %&gt;% #arrange the pingtimestamp in ascending order\n  filter(row_number()==1) %&gt;% #filter only taking the first row which is the start point (origin)\n  mutate(weekday = wday (pingtimestamp, label=TRUE, abbr=TRUE),\n         \n        start_hr = factor(hour(pingtimestamp)),\n        day = factor(mday(pingtimestamp)))\n\nView(origin_df)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-Class_Ex02.html#extracting-trip-ending-locations",
+    "href": "In-class_Ex/In-class_Ex02/In-Class_Ex02.html#extracting-trip-ending-locations",
+    "title": "In Class Exercise 2",
+    "section": "Extracting trip ending locations",
+    "text": "Extracting trip ending locations\n\n\nCode\ndestination_df &lt;- df %&gt;%\n  group_by(trj_id)%&gt;% #group by trip id\n  arrange(desc(pingtimestamp)) %&gt;% #arrange the pingtimestamp in descending order\n  filter(row_number()==1) %&gt;% #filter only taking the first row which is the start point (destination)\n  mutate(weekday = wday (pingtimestamp, label=TRUE, abbr=TRUE),\n         \n        end_hr = factor(hour(pingtimestamp)),\n        day = factor(mday(pingtimestamp)))\n\nView(destination_df)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-Class_Ex02.html#write-the-files-that-we-created-into-our-folders.-saving-it-in-rds-format-is-good-if-you-are-still-working-with-r-as-it-keeps-the-native-r-functions",
+    "href": "In-class_Ex/In-class_Ex02/In-Class_Ex02.html#write-the-files-that-we-created-into-our-folders.-saving-it-in-rds-format-is-good-if-you-are-still-working-with-r-as-it-keeps-the-native-r-functions",
+    "title": "In Class Exercise 2",
+    "section": "Write the files that we created into our folders. Saving it in rds format is good if you are still working with R as it keeps the native R functions",
+    "text": "Write the files that we created into our folders. Saving it in rds format is good if you are still working with R as it keeps the native R functions"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-Class_Ex02.html#import-data-back-for-reading",
+    "href": "In-class_Ex/In-class_Ex02/In-Class_Ex02.html#import-data-back-for-reading",
+    "title": "In Class Exercise 2",
+    "section": "Import Data back for reading",
+    "text": "Import Data back for reading\n\n\nCode\norigin_df &lt;- read_rds(\"data/rds/origin_df.rds\")\ndestination_df &lt;- read_rds(\"data/rds/destination_df.rds\")"
   }
 ]
