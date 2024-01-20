@@ -92,7 +92,7 @@ View(destination_df)
 
 ```
 
-# After all the data manipulation and getting the data we want, we add the " #\| eval" False " code chunk into our code to not run the code when ever we
+# After all the data manipulation and getting the data we want, we add the " #/ eval: False " code chunk into our code to not run the code when ever we
 
 ## Write the files that we created into our folders. Saving it in rds format is good if you are still working with R as it keeps the native R functions
 
