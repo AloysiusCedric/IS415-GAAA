@@ -1,7 +1,6 @@
 ---
 title: "Hands On Exercise 3"
 ---
-
 # 4.1 Overview
 
 Spatial Point Pattern Analysis is the evaluation of the pattern or distribution, of a set of points on a surface. The point can be location of:
@@ -45,6 +44,7 @@ In this hands-on exercise, five R packages will be used, they are:
 Use the code chunk below to install and launch the five R packages.
 
 ```{r}
+#/ eval : False
 
 
 install.packages("maptools", repos = "https://packagemanager.posit.co/cran/2023-10-13")
