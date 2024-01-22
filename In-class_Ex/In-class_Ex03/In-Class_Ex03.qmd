@@ -4,19 +4,94 @@ date: "January 22, 2024"
 date-modifeid: "last-modified"
 ---
 
-## Installing maptools
-
 ```{r}
 #/ eval : False
+#/ echo : False
 
 
 install.packages("maptools", repos = "https://packagemanager.posit.co/cran/2023-10-13")
 ```
 
+##Loading packages
 ```{r}
 pacman::p_load(maptools, sf, raster, spatstat, tmap, tidyverse)
 ```
 
-```{p}
-print("hello world")
+##Importing childcare and layer data
+```{r}
+childcare_sf = st_read("data/geospatial/ChildCareServices.geojson") %>%
+  st_transform(crs = 3414)
+mpsz_sf = st_read (dsn="data/geospatial", layer = "MP14_SUBZONE_WEB_PL") %>%
+  st_transform(crs = 3414)
+```
+
+##Generating Costal Outline
+```{r}
+sg_sf = mpsz_sf %>%
+  st_union()
+
+```
+
+```{r}
+plot(sg_sf)
+```
+
+## Geospatial Data Wrangling
+
+### Creating ppp object using sf method
+
+```{r}
+childcare_ppp = as.ppp(childcare_sf)
+
+```
+
+```{r}
+summary(childcare_ppp)
+
+```
+
+### Handling duplicated points
+
+We can check the duplication in a ***PPP*** object by using the code chun below
+```{r}
+any(duplicated(childcare_ppp))
+```
+To count the number of co-indicnce point, we will use the *multiplicity()* function as showing in the code chunk below.
+
+```{r}
+multiplicity(childcare_ppp)
+```
+
+### Creating ***owin*** object : sf method
+
+# All as. function can only be used on sf
+
+```{r}
+
+sg_owin = as.owin(sg_sf)
+```
+
+```{r}
+plot(sg_owin)
+```
+
+
+#Getting diffferent planning area (Use filter for sf)
+```{r}
+pg = mpsz_sf %>%
+  filter(PLN_AREA_N == "PUNGGOL")
+tm = mpsz_sf %>%
+  filter(PLN_AREA_N == "TAMPINES")
+ck = mpsz_sf %>%
+  filter(PLN_AREA_N == "CHOA CHU KANG")
+jw = mpsz_sf %>%
+  filter(PLN_AREA_N == "JURONG WEST")
+```
+
+Plotting different planning area
+```{r}
+plot(pg, main = "Punggol")
+plot(tm, main = "Tampines")
+plot(ck, main = "Choa Chu Kang")
+plot(jw, main = "Jurong West")
 ```
