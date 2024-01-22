@@ -263,13 +263,13 @@
     "href": "In-class_Ex/In-class_Ex03/In-Class_Ex03.html",
     "title": "Kernel Density Estimation",
     "section": "",
-    "text": "install.packages(\"maptools\", repos = \"https://packagemanager.posit.co/cran/2023-10-13\")\n\nInstalling package into 'C:/Users/cedri/AppData/Local/R/win-library/4.3'\n(as 'lib' is unspecified)\n\n\npackage 'maptools' successfully unpacked and MD5 sums checked\n\nThe downloaded binary packages are in\n    C:\\Users\\cedri\\AppData\\Local\\Temp\\Rtmpmg1ZZv\\downloaded_packages\n\n\n\npacman::p_load(maptools, sf, raster, spatstat, tmap, tidyverse)"
+    "text": "#/ eval : False\n\n\ninstall.packages(\"maptools\", repos = \"https://packagemanager.posit.co/cran/2023-10-13\")\n\nInstalling package into 'C:/Users/cedri/AppData/Local/R/win-library/4.3'\n(as 'lib' is unspecified)\n\n\npackage 'maptools' successfully unpacked and MD5 sums checked\n\nThe downloaded binary packages are in\n    C:\\Users\\cedri\\AppData\\Local\\Temp\\Rtmp8mHDdp\\downloaded_packages\n\n\n\npacman::p_load(maptools, sf, raster, spatstat, tmap, tidyverse)\n\n\nprint(\"hello world\")"
   },
   {
     "objectID": "In-class_Ex/In-class_Ex03/In-Class_Ex03.html#installing-maptools",
     "href": "In-class_Ex/In-class_Ex03/In-Class_Ex03.html#installing-maptools",
     "title": "Kernel Density Estimation",
     "section": "",
-    "text": "install.packages(\"maptools\", repos = \"https://packagemanager.posit.co/cran/2023-10-13\")\n\nInstalling package into 'C:/Users/cedri/AppData/Local/R/win-library/4.3'\n(as 'lib' is unspecified)\n\n\npackage 'maptools' successfully unpacked and MD5 sums checked\n\nThe downloaded binary packages are in\n    C:\\Users\\cedri\\AppData\\Local\\Temp\\Rtmpmg1ZZv\\downloaded_packages\n\n\n\npacman::p_load(maptools, sf, raster, spatstat, tmap, tidyverse)"
+    "text": "#/ eval : False\n\n\ninstall.packages(\"maptools\", repos = \"https://packagemanager.posit.co/cran/2023-10-13\")\n\nInstalling package into 'C:/Users/cedri/AppData/Local/R/win-library/4.3'\n(as 'lib' is unspecified)\n\n\npackage 'maptools' successfully unpacked and MD5 sums checked\n\nThe downloaded binary packages are in\n    C:\\Users\\cedri\\AppData\\Local\\Temp\\Rtmp8mHDdp\\downloaded_packages\n\n\n\npacman::p_load(maptools, sf, raster, spatstat, tmap, tidyverse)\n\n\nprint(\"hello world\")"
   }
 ]

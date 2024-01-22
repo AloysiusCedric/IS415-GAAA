@@ -6,13 +6,17 @@ date-modifeid: "last-modified"
 
 ## Installing maptools
 
-```{R}
+```{r}
 #/ eval : False
 
 
 install.packages("maptools", repos = "https://packagemanager.posit.co/cran/2023-10-13")
 ```
 
-```{R}
+```{r}
 pacman::p_load(maptools, sf, raster, spatstat, tmap, tidyverse)
+```
+
+```{p}
+print("hello world")
 ```
