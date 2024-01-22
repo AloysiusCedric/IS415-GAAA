@@ -257,5 +257,19 @@
     "title": "IS415-GAA",
     "section": "",
     "text": "Welcome to IS415 Geospatial Analytics and Applications\nThis is the course website of IS415 I study this term. You will find my course work on this website"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex03/In-Class_Ex03.html",
+    "href": "In-class_Ex/In-class_Ex03/In-Class_Ex03.html",
+    "title": "Kernel Density Estimation",
+    "section": "",
+    "text": "install.packages(\"maptools\", repos = \"https://packagemanager.posit.co/cran/2023-10-13\")\n\nInstalling package into 'C:/Users/cedri/AppData/Local/R/win-library/4.3'\n(as 'lib' is unspecified)\n\n\npackage 'maptools' successfully unpacked and MD5 sums checked\n\nThe downloaded binary packages are in\n    C:\\Users\\cedri\\AppData\\Local\\Temp\\Rtmpmg1ZZv\\downloaded_packages\n\n\n\npacman::p_load(maptools, sf, raster, spatstat, tmap, tidyverse)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex03/In-Class_Ex03.html#installing-maptools",
+    "href": "In-class_Ex/In-class_Ex03/In-Class_Ex03.html#installing-maptools",
+    "title": "Kernel Density Estimation",
+    "section": "",
+    "text": "install.packages(\"maptools\", repos = \"https://packagemanager.posit.co/cran/2023-10-13\")\n\nInstalling package into 'C:/Users/cedri/AppData/Local/R/win-library/4.3'\n(as 'lib' is unspecified)\n\n\npackage 'maptools' successfully unpacked and MD5 sums checked\n\nThe downloaded binary packages are in\n    C:\\Users\\cedri\\AppData\\Local\\Temp\\Rtmpmg1ZZv\\downloaded_packages\n\n\n\npacman::p_load(maptools, sf, raster, spatstat, tmap, tidyverse)"
   }
 ]

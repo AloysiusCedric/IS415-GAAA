@@ -1,3 +1,18 @@
 ---
-title: "In Class Exercise 3"
+title: "Kernel Density Estimation"
+date: "January 22, 2024"
+date-modifeid: "last-modified"
 ---
+
+## Installing maptools
+
+```{R}
+#/ eval : False
+
+
+install.packages("maptools", repos = "https://packagemanager.posit.co/cran/2023-10-13")
+```
+
+```{R}
+pacman::p_load(maptools, sf, raster, spatstat, tmap, tidyverse)
+```
