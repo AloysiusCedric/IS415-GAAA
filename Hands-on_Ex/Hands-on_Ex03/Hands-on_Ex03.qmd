@@ -1,6 +1,7 @@
 ---
 title: "Hands On Exercise 3"
 ---
+
 # 4.1 Overview
 
 Spatial Point Pattern Analysis is the evaluation of the pattern or distribution, of a set of points on a surface. The point can be location of:
