@@ -1,3 +1,185 @@
 ---
 title: "Take Home Exercise 1"
 ---
+
+# Background
+
+Human mobility, the movement of human beings in space and time, reflects the spatial-temporal characteristics of human behavior. With the advancement Information and Communication Technologies (ICT) especially smart phone, a large volume of data related to human mobility have been collected. By using appropriate GIS analysis methods, these data are potentially useful in supporting smart city planning and management.
+
+In Singapore, one of the important source of data related to human mobility is from Land Transport Authority (LTA) DataMall. Two data sets related to human mobility are provided by the portal, they are: Passenger Volume by Origin Destination Train Stations and Passenger Volume by Origin Destination Bus Stops. One of the limitation of these data sets is that their location are biased to either bus stops or MRT/LRT stations. In 2020, another very interesting human mobility data set called Grab Posisi was released by GRAB, one of the largest shared taxi operator in South-east Asia. There are two data sets been released and one of them is for Singapore.
+
+# Objective
+
+Geospatial analytics hold tremendous potential to address complex problems facing society. In this study, you are tasked to apply appropriate spatial point patterns analysis methods to discover the geographical and spatio-temporal distribution of Grab hailing services locations in Singapore.
+
+# **The Task**
+
+The specific tasks of this take-home exercise are as follows:
+
+-   Using appropriate function of **sf** and **tidyverse**, preparing the following geospatial data layer in sf tibble data.frames:
+
+    -   Grab taxi location points either by origins or destinations.
+
+    -   Road layer within Singapore excluding outer islands.
+
+    -   Singapore boundary layer excluding outer islands
+
+-   Using the extracted data, derive traditional Kernel Density Estimation layers.
+
+-   Using the extracted data, derive either Network Kernel Density Estimation (NKDE) or Temporal Network Kernel Density Estimation (TNKDE)
+
+-   Using appropriate **tmap** functions, display the kernel density layers on openstreetmap of Singapore.
+
+-   Describe the spatial patterns revealed by the kernel density maps.
+
+# Import
+
+## Packages
+
+The R packages used in this project are:
+
+-   **sf**: a relatively new R package specially designed to import, manage and process vector-based geospatial data in R.
+
+-   **tidyverse**: a family of other R packages for performing data science tasks such as importing, wrangling, and visualising data.
+
+-   **tmap**: which provides functions for plotting cartographic quality static point patterns maps or interactive maps by using [leaflet](https://leafletjs.com/) API.
+
+-   **maptools**: which provides a set of tools for manipulating geographic data. In this hands-on exercise, we mainly use it to convert *Spatial* objects into *ppp* format of **spatstat**.
+
+-   **raster**: which reads, writes, manipulates, analyses and model of gridded spatial data (i.e. raster). In this hands-on exercise, it will be used to convert image output generate by spatstat into raster format.
+
+-   **spatstat**: which has a wide range of useful functions for point pattern analysis. In this hands-on exercise, it will be used to perform 1st- and 2nd-order spatial point patterns analysis and derive kernel density estimation (KDE) layer.
+
+-   **sfdep**: for analysing spatial dependencies
+
+```{r}
+pacman::p_load(sp, sf, spNetwork, tmap, classInt, viridis, tidyverse, spatstat, sfdep, raster, maptools, arrow, lubridate)
+```
+
+## Data import and preparation
+
+### Importing boundary layer then converting into SVY21, CRS 3414
+
+```{r}
+
+mpsz_sf = st_read("data/geospatial/MasterPlan2019SubzoneBoundaryNoSeaGEOJSON.geojson")
+
+```
+
+```{r}
+mpsz_sf <- st_make_valid(mpsz_sf)
+```
+
+```{r}
+mpsz_sf <- st_transform(mpsz_sf,3414)
+
+```
+
+```{r}
+st_crs(mpsz_sf)
+```
+
+### Importing train station location data
+
+```{r}
+
+train = st_read("data/aspatial", layer="RapidTransitSystemStation")
+
+```
+
+```{r}
+train = st_transform(train, 3414)
+```
+
+```{r}
+st_crs(train)
+```
+
+### Importing Bus stop location data
+
+```{r}
+bus = st_read("data/aspatial", layer="BusStop")
+```
+
+```{r}
+bus = st_transform(bus, 3414)
+```
+
+```{r}
+st_crs(bus)
+```
+
+### Importing Grab Posisi Dataset
+
+```{r}
+df <- read_parquet("data/GrabPosisi/part-00000-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet")
+
+```
+
+### Importing open street map data
+
+```{r}
+street = st_read(dsn="data/geospatial", layer="gis_osm_roads_free_1")
+
+
+```
+
+```{r}
+
+street = st_transform(street, 3414)
+```
+
+```{r}
+st_crs(street)
+```
+
+## Extracting trip starting locations
+
+Using the step learned in previous lesson,
+
+-   Extracting trips' origin locations.
+
+-   derive three new columns (i.e. variables) for weekday, starting hour and day of the month.
+
+-   name the output tibble date.frame.origin_df
+
+```{r}
+
+df$pingtimestamp <- as_date(df$pingtimestamp)
+```
+
+```{r}
+origin_df <- df %>%
+  group_by(trj_id)%>% #group by trip id
+  arrange(pingtimestamp) %>% #arrange the pingtimestamp in ascending order
+  filter(row_number()==1) %>% #filter only taking the first row which is the start point (origin)
+  mutate(weekday = wday (pingtimestamp, label=TRUE, abbr=TRUE),
+        start_hr = factor(hour(pingtimestamp)),
+        day = factor(mday(pingtimestamp)))
+
+View(origin_df)
+
+```
+
+## Extracting trip ending locations
+
+```{r}
+
+destination_df <- df %>%
+  group_by(trj_id)%>% #group by trip id
+  arrange(desc(pingtimestamp)) %>% #arrange the pingtimestamp in descending order
+  filter(row_number()==1) %>% #filter only taking the first row which is the start point (destination)
+  mutate(weekday = wday (pingtimestamp, label=TRUE, abbr=TRUE),
+         
+        end_hr = factor(hour(pingtimestamp)),
+        day = factor(mday(pingtimestamp)))
+
+View(destination_df)
+```
+
+## Converting point feature data frame to SPatialPointsDataFrame
+
+```{r}
+sf_bus = as_Spatial(bus)
+
+```
