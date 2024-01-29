@@ -1,6 +1,6 @@
 ---
 title: "Hands on Exercise 4"
-date: "January 62, 2024"
+date: "January 26, 2024"
 date-modifeid: "last-modified"
 ---
 

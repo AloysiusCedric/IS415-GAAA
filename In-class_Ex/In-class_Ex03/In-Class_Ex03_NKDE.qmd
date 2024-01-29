@@ -25,8 +25,6 @@ str(network)
 str(childcare)
 ```
 
-
-
 ## Visualising the Geospatial Data
 
 Before we jump into the analysis, it is a good practice to visualise the geospatial data. There are at least two ways to visualise the geospatial data. One way is by using plot() of Base R as shown in the code chunk below.

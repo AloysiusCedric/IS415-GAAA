@@ -180,6 +180,13 @@ View(destination_df)
 ## Converting point feature data frame to SPatialPointsDataFrame
 
 ```{r}
-sf_bus = as_Spatial(bus)
+bus_sf = as_Spatial(bus)
 
+```
+
+## Visualising the geo spatial data
+```{r}
+tmap_mode('view')
+tm_shape(bus_sf) +
+  tm_dots()
 ```
