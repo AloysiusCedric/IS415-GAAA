@@ -1,5 +1,5 @@
 ---
-title: "Hands-on Exercise 6 - Global Measures of Spatial Autocorrelation & Local Measures of Spatial Autocorrelation"
+title: "Hands-on Exercise 5 - Global Measures of Spatial Autocorrelation & Local Measures of Spatial Autocorrelation"
 format:
   html:
     code-fold: true
@@ -24,9 +24,7 @@ In this case study, we are interested to examine the spatial pattern of a select
 
 Two data sets will be used in this hands-on exercise, they are:
 
-Hunan province administrative boundary layer at county level. This is a geospatial data set in ESRI shapefile format.
-Hunan_2012.csv: This csv file contains selected Hunan’s local development indicators in 2012.
-
+Hunan province administrative boundary layer at county level. This is a geospatial data set in ESRI shapefile format. Hunan_2012.csv: This csv file contains selected Hunan’s local development indicators in 2012.
 
 1.2 Install and Load R packages
 
@@ -87,7 +85,7 @@ tmap_arrange(equal,
              ncol=2)
 ```
 
-3 Global Measures of Spatial Autocorrelation 
+3 Global Measures of Spatial Autocorrelation
 
 Compute global spatial autocorrelation statistics and to perform spatial complete randomness test for global spatial autocorrelation.
 
@@ -104,6 +102,7 @@ wm_q <- poly2nb(hunan,
                 queen=TRUE)
 summary(wm_q)
 ```
+
 Summary report above shows that there are 88 area units in Hunan. The most connected area unit has 11 neighbours. There are two area units with only one neighbours.
 
 3.2 Row-standardized weights matrix
@@ -130,8 +129,8 @@ moran.test(hunan$GDPPC,
            na.action=na.omit)
 ```
 
-4.2 Computing Monte Carlo Moran’s I
-Performs permutation test for Moran’s I statistic by using moran.mc() of spdep. A total of 1000 simulation will be performed.
+4.2 Computing Monte Carlo Moran’s I Performs permutation test for Moran’s I statistic by using moran.mc() of spdep. A total of 1000 simulation will be performed.
+
 ```{r}
 set.seed(1234)
 bperm= moran.mc(hunan$GDPPC, 
@@ -147,6 +146,7 @@ bperm
 Examine the simulated Moran’s I test statistics in greater detail. This can be achieved by plotting the distribution of the statistical values as a histogram
 
 In the code chunk below hist() and abline() of R Graphics are used.
+
 ```{r}
 mean(bperm$res[1:999])
 ```
@@ -190,8 +190,7 @@ bperm=geary.mc(hunan$GDPPC,
 bperm
 ```
 
-5.3 Visualising Monte Carlo Geary’s C
-Plot a histogram to reveal the distribution of the simulated values
+5.3 Visualising Monte Carlo Geary’s C Plot a histogram to reveal the distribution of the simulated values
 
 ```{r}
 mean(bperm$res[1:999])
@@ -226,6 +225,7 @@ MI_corr <- sp.correlogram(wm_q,
                           style="W")
 plot(MI_corr)
 ```
+
 Plotting the output might not allow us to provide complete interpretation. This is because not all autocorrelation values are statistically significant. Hence, it is important for us to examine the full analysis report by printing out the analysis results as in the code chunk below.
 
 ```{r}
@@ -245,7 +245,7 @@ GC_corr <- sp.correlogram(wm_q,
 plot(GC_corr)
 ```
 
-Similar to the previous step, we will print out the analysis report 
+Similar to the previous step, we will print out the analysis report
 
 ```{r}
 print(GC_corr)
@@ -269,12 +269,7 @@ head(localMI)
 
 localmoran() function returns a matrix of values whose columns are:
 
-Ii: the local Moran’s I statistics
-E.Ii: the expectation of local moran statistic under the randomisation hypothesis
-Var.Ii: the variance of local moran statistic under the randomisation hypothesis
-Z.Ii:the standard deviate of local moran statistic
-Pr(): the p-value of local moran statistic
-The code chunk below list the content of the local Moran matrix derived by using printCoefmat().
+Ii: the local Moran’s I statistics E.Ii: the expectation of local moran statistic under the randomisation hypothesis Var.Ii: the variance of local moran statistic under the randomisation hypothesis Z.Ii:the standard deviate of local moran statistic Pr(): the p-value of local moran statistic The code chunk below list the content of the local Moran matrix derived by using printCoefmat().
 
 ```{r}
 printCoefmat(data.frame(
@@ -292,8 +287,8 @@ hunan.localMI <- cbind(hunan,localMI) %>%
   rename(Pr.Ii = Pr.z....E.Ii..)
 ```
 
-7.1.2 Mapping local Moran’s I values
-Using choropleth mapping functions of tmap package, we can plot the local Moran’s I values by using the code chinks below.
+7.1.2 Mapping local Moran’s I values Using choropleth mapping functions of tmap package, we can plot the local Moran’s I values by using the code chinks below.
+
 ```{r}
 tm_shape(hunan.localMI) +
   tm_fill(col = "Ii", 
@@ -357,6 +352,7 @@ nci <- moran.plot(hunan$GDPPC, rswm_q,
                   xlab="GDPPC 2012", 
                   ylab="Spatially Lag GDPPC 2012")
 ```
+
 Notice that the plot is split in 4 quadrants. The top right corner belongs to areas that have high GDPPC and are surrounded by other areas that have the average level of GDPPC.
 
 8.2 Plotting Moran scatterplot with standardised variable
@@ -454,6 +450,7 @@ tm_shape(hunan.localMI) +
   tm_view(set.zoom.limits = c(11,17)) +
   tm_borders(alpha=0.5)
 ```
+
 For effective interpretation, it is better to plot both the local Moran’s I values map and its corresponding p-values map next to each other.
 
 The code chunk below will be used to create such visualisation.
@@ -478,11 +475,11 @@ tmap_arrange(gdppc, LISAmap,
              asp=1, ncol=2)
 ```
 
-9 Hot Spot and Cold Spot Area Analysis 
+9 Hot Spot and Cold Spot Area Analysis
 
 Beside detecting cluster and outliers, localised spatial statistics can be also used to detect hot spot and/or cold spot areas.
 
-The term ‘hot spot’ has been used generically across disciplines to describe a region or value that is higher relative to its surroundings 
+The term ‘hot spot’ has been used generically across disciplines to describe a region or value that is higher relative to its surroundings
 
 9.1 Getis and Ord’s G-Statistics
 
@@ -490,9 +487,7 @@ An alternative spatial statistics to detect spatial anomalies is the Getis and O
 
 The analysis consists of three steps:
 
-Deriving spatial weight matrix
-Computing Gi statistics
-Mapping Gi statistics
+Deriving spatial weight matrix Computing Gi statistics Mapping Gi statistics
 
 9.2 Deriving distance-based weight matrix
 
@@ -500,20 +495,19 @@ First, we need to define a new set of neighbours. Whist the spatial autocorrelat
 
 There are two type of distance-based proximity matrix, they are:
 
-fixed distance weight matrix; and
-adaptive distance weight matrix.
+fixed distance weight matrix; and adaptive distance weight matrix.
 
 9.2.1 Deriving the centroid
 
 need points to associate with each polygon before we can make our connectivity graph. It will be a little more complicated than just running st_centroid() on the sf object: us.bound. We need the coordinates in a separate data frame for this to work. To do this we will use a mapping function. The mapping function applies a given function to each element of a vector and returns a vector of the same length. Our input vector will be the geometry column of us.bound. Our function will be st_centroid(). We will be using map_dbl variation of map from the purrr package. For more documentation, check out map documentation
 
-To get our longitude values we map the st_centroid() function over the geometry column of us.bound and access the longitude value through double bracket notation [[]] and 1. This allows us to get only the longitude, which is the first value in each centroid.
+To get our longitude values we map the st_centroid() function over the geometry column of us.bound and access the longitude value through double bracket notation \[\[\]\] and 1. This allows us to get only the longitude, which is the first value in each centroid.
 
 ```{r}
 longitude <- map_dbl(hunan$geometry, ~st_centroid(.x)[[1]])
 ```
 
-We do the same for latitude with one key difference. We access the second value per each centroid with [[2]].
+We do the same for latitude with one key difference. We access the second value per each centroid with \[\[2\]\].
 
 ```{r}
 latitude <- map_dbl(hunan$geometry, ~st_centroid(.x)[[2]])
@@ -529,10 +523,7 @@ coords <- cbind(longitude, latitude)
 
 Firstly, we need to determine the upper limit for distance band by using the steps below:
 
-Return a matrix with the indices of points belonging to the set of the k nearest neighbours of each other by using knearneigh() of spdep.
-Convert the knn object returned by knearneigh() into a neighbours list of class nb with a list of integer vectors containing neighbour region number ids by using knn2nb().
-Return the length of neighbour relationship edges by using nbdists() of spdep. The function returns in the units of the coordinates if the coordinates are projected, in km otherwise.
-Remove the list structure of the returned object by using unlist().
+Return a matrix with the indices of points belonging to the set of the k nearest neighbours of each other by using knearneigh() of spdep. Convert the knn object returned by knearneigh() into a neighbours list of class nb with a list of integer vectors containing neighbour region number ids by using knn2nb(). Return the length of neighbour relationship edges by using nbdists() of spdep. The function returns in the units of the coordinates if the coordinates are projected, in km otherwise. Remove the list structure of the returned object by using unlist().
 
 ```{r}
 #coords <- coordinates(hunan)
@@ -545,7 +536,7 @@ The summary report shows that the largest first nearest neighbour distance is 61
 
 9.2.3 Computing fixed distance weight matrix
 
-Now, we will compute the distance weight matrix by using dnearneigh() 
+Now, we will compute the distance weight matrix by using dnearneigh()
 
 ```{r}
 wm_d62 <- dnearneigh(coords, 0, 62, longlat = TRUE)
@@ -577,7 +568,7 @@ knn_lw <- nb2listw(knn, style = 'B')
 summary(knn_lw)
 ```
 
-10 Computing Gi statistics 
+10 Computing Gi statistics
 
 10.1 Gi statistics using fixed distance
 
@@ -598,7 +589,7 @@ hunan.gi <- cbind(hunan, as.matrix(gi.fixed)) %>%
   rename(gstat_fixed = as.matrix.gi.fixed.)
 ```
 
-In fact, the code chunk above performs three tasks. First, it convert the output vector (i.e. gi.fixed) into r matrix object by using as.matrix(). Next, cbind() is used to join hunan@data and gi.fixed matrix to produce a new SpatialPolygonDataFrame called hunan.gi. Lastly, the field name of the gi values is renamed to gstat_fixed by using rename().
+In fact, the code chunk above performs three tasks. First, it convert the output vector (i.e. gi.fixed) into r matrix object by using as.matrix(). Next, cbind() is used to join hunan\@data and gi.fixed matrix to produce a new SpatialPolygonDataFrame called hunan.gi. Lastly, the field name of the gi values is renamed to gstat_fixed by using rename().
 
 10.2 Mapping Gi values with fixed distance weights
 
