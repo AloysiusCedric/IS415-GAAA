@@ -1,0 +1,85 @@
+---
+title: "In Class Exercise 5"
+---
+
+# Installing and loading packages
+
+```{r}
+
+pacman::p_load(sf, sfdep, tmap, tidyverse)
+```
+
+# The Data
+
+For the purpose of this exercise, the Hunan data sets will be used. There are two data sets in this use case, they are:
+
+-   Hunan, a geospatial data set in ESRI shapefile format and
+
+-   Hunan
+
+```{r}
+
+hunan <- st_read(dsn = "data/geospatial", layer = "Hunan")
+hunan2012 <- read_csv("data/aspatial/Hunan_2012.csv")
+
+
+
+```
+Converting Hunan into a CRS 3414
+```{r}
+hunan <- st_transform(hunan, crs = 3414)
+hunan
+
+```
+# Joining the two data sets
+```{r}
+hunan_GDPPC <- left_join(hunan,hunan2012) %>%
+  dplyr::select(1:4, 7, 15)
+```
+
+
+# Mapping the data
+```{r}
+tm_shape(hunan_GDPPC) +
+  tm_fill("GDPPC", style = "quantile", title = "GDP per Capita") +
+  tm_layout(main.title = "GDP per Capita in Hunan, 2012",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45,
+            legend.width =0.35,
+            frame =TRUE) +
+  tm_borders(alpha = 0.5) +
+  tm_compass(type = "8star")
+```
+
+## Step 1: Deriving contiguity weights: Queen's method
+
+```{r}
+
+wm_q = hunan_GDPPC %>%
+  mutate(nb = st_contiguity(geometry),
+         wt = st_weights(nb, style = "W"),
+         .before = 1)
+
+```
+
+## Computing Global Moran'I
+
+```{r}
+moranI = global_moran (wm_q$GDPPC,
+                       wm_q$nb,
+                       wm_q$wt)
+glimpse(moranI)
+
+```
+
+```{r}
+# Running this for 100 times
+global_moran_perm(wm_q$GDPPC,
+                  wm_q$nb,
+                  wm_q$wt,
+                  nsim = 99,
+)
+
+
+```
