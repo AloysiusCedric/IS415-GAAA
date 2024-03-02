@@ -266,7 +266,7 @@ global_moran_perm(wm_q$total_cases,
 
 The global Moran's I value is 0.2 and the p-value is 0.001. This indicates that there is a significant spatial autocorrelation in the number of dengue cases in Tainan City, in our interest of village studies. This results is consistent with the previous test.
 
-#9.0 Local Spatial Autocorrelation Analysis
+# 9.0 Local Spatial Autocorrelation Analysis
 
 We will now perform local spatial autocorrelation analysis to identify the clusters and outliers in the number of dengue cases in Tainan City. We will be using the `sfdep` package to perform the local spatial autocorrelation analysis.This analysis will go into the localised spatial patterns of the dengue cases in our interest of study.
 
@@ -312,7 +312,7 @@ Interpreting Local Moran’s I (“ii”) together with p-value (“p_ii”) map
 
 -   The map also shows an outlier indicated in orange. This outlier is significant at the 0.05 level. This indicates that there are some villages that have a low number of dengue cases and are surrounded by villages with a high number of dengue cases.
 
-##9.3 Visualising LISA map
+## 9.3 Visualising LISA map
 
 LISA map is a categorical map showing outliers and clusters. There are two types of outliers namely: High-Low and Low-High outliers. Likewise, there are two type of clusters namely: High-High and Low-Low clusters. In fact, LISA map is an interpreted map by combining local Moran’s I of geographical areas and their respective p-values.
 
@@ -339,7 +339,7 @@ From the graph above, we can see a few High-High and Low-Low clusters. This indi
 
 -   There are some villages in purple, showing that they are villages with low numbers of dengue cases, surrounding the villages with higher numbers of dengue cases.
 
-#10.0 Emerging Hotspot Analysis (EHSA)
+# 10.0 Emerging Hotspot Analysis (EHSA)
 
 Emerging hotspot analysis is a method used to identify the emerging hot spot/cold spot areas in a study area. We will be using the `sfdep` package to perform the emerging hot spot analysis.
 
@@ -547,7 +547,6 @@ ehsa = read_rds("data/rds/ehsa.rds")
 head(ehsa)
 ```
 
-
 From the visualization, it seems like all villages have different pattern detected in terms of distribution. How significant is this result though?
 
 ## 10.6 Visualizing the distribution of EHSA classes
@@ -598,7 +597,6 @@ The data seems to exhibit many different pattern classes. The different pattern 
 -   **Sporadic Hotspot:** villages witnessing occasional but significant spikes in dengue cases.
 
 -   **No Pattern Detected:** villages where no clear pattern in dengue cases is discernible over time.
-
 
 # 11.0 Reflection
 
