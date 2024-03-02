@@ -180,7 +180,7 @@ Here we group the data by the village and then summarize the number of dengue ca
 dengue_boundary = st_join(village, dengue_boundary, join = st_contains) %>% group_by (VILLENG.x) %>% summarize(total_cases= n())
 ```
 
-#6.0 Store the data into rds file.
+# 6.0 Store the data into rds file.
 
 This will greatly reduce the time it takes to load the data in the future.
 
@@ -195,7 +195,7 @@ write_rds(village, "data/rds/village.rds")
 
 ```
 
-#7.0 Visualising the number of dengue cases by village using a choropleth map
+# 7.0 Visualising the number of dengue cases by village using a choropleth map
 
 First, we will read the data from the rds file
 
@@ -222,7 +222,7 @@ tm_shape(dengue_boundary) +
 
 From the map above, we can see that the number of dengue cases is concentrated in the city center. With some villages having a high number of dengue cases and some having a low number of dengue cases. The next section will perform a spatial autocorrelation analysis to determine if the spatial distribution of the dengue cases is random or if there is a clustering or dispersed pattern.
 
-#8.0 Global Spatial Autocorrelation Analysis
+# 8.0 Global Spatial Autocorrelation Analysis
 
 We will be performing spatial auto correlation analysis to asses if the spatial patterns are randomly distributed or having a clustering/ dispersed pattern.
 
@@ -241,7 +241,7 @@ wm_q
 
 ```
 
-##8.1 Using Global Moran's I
+## 8.1 Using Global Moran's I
 
 ```{r}
 global_moran_test(wm_q$total_cases,
@@ -252,7 +252,7 @@ global_moran_test(wm_q$total_cases,
 
 The test result shows that the Moran's I value is 0.2 and the p-value is 0.001. This indicates that there is a significant spatial autocorrelation in the number of dengue cases in Tainan City, in our interest of village studies.
 
-##8.2 Using Global Moran's I with permutation
+## 8.2 Using Global Moran's I with permutation
 
 However, this is not sufficient enough, the test should be conducted in permutation
 
@@ -270,7 +270,7 @@ The global Moran's I value is 0.2 and the p-value is 0.001. This indicates that 
 
 We will now perform local spatial autocorrelation analysis to identify the clusters and outliers in the number of dengue cases in Tainan City. We will be using the `sfdep` package to perform the local spatial autocorrelation analysis.This analysis will go into the localised spatial patterns of the dengue cases in our interest of study.
 
-##9.1 Computing the Local Indicator of Spatial Association (LISA)
+## 9.1 Computing the Local Indicator of Spatial Association (LISA)
 
 ```{r}
 lisa <- wm_q %>% mutate(local_moran = local_moran(
@@ -279,7 +279,7 @@ lisa <- wm_q %>% mutate(local_moran = local_moran(
   unnest(local_moran)
 ```
 
-##9.2 Visuaising local Moran’s I and p-value We will visualise the local spatial autocorrelation using a map together with the p value. This allows for the identification of the clusters and outliers in the number of dengue cases in Tainan City that are significant at the 0.05 level.
+## 9.2 Visuaising local Moran’s I and p-value We will visualise the local spatial autocorrelation using a map together with the p value. This allows for the identification of the clusters and outliers in the number of dengue cases in Tainan City that are significant at the 0.05 level.
 
 ```{r}
 
@@ -347,7 +347,7 @@ Emerging hotspot analysis is a method used to identify the emerging hot spot/col
 
 -   This study also allows us to uncover patterns of these hot-spots and cold spot, so as to better understand the spatial distribution of dengue cases in Tainan City.
 
-##10.1 Creating a Time Series Cube
+## 10.1 Creating a Time Series Cube
 
 The code below will group the dengue data that with have according to the TOWNNAME, VILLNAME, week and then summarise them by the total number of occurances which is the cases
 
@@ -435,7 +435,7 @@ is_spacetime_cube(dengue_st)
 
 ```
 
-##10.2 Deriving Spatial Weight Matrix
+## 10.2 Deriving Spatial Weight Matrix
 
 As usual, we will need to derive a spatial weight matrix before we can compute local Gi\* statistics. Code chunk below will be used to derive a spatial weight matrix by using sfdep functions and tidyverse approach.
 
@@ -452,7 +452,7 @@ dengue_nb <- dengue_st %>%
 
 ```
 
-##10.3 Computing Local Gi\* Statistics
+## 10.3 Computing Local Gi\* Statistics
 
 This section will focus on calculatin gthe Gi\*
 
@@ -472,7 +472,7 @@ The results of gi_stars will be displayed below
 gi_stars
 ```
 
-##10.4 Mann-Kendall Test
+## 10.4 Mann-Kendall Test
 
 The Gi\* allows us to conduct trend analysis using the Mann-Kendall test. The code chunk below uses location Hainan Vil. , D06
 

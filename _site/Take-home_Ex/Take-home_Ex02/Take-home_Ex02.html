@@ -190,6 +190,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../Take-home_Ex/Take-home_Ex01/Take-Home_Ex01.html" rel="" target="">
  <span class="dropdown-text">Take home exercise 1</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../Take-home_Ex/Take-home_Ex02/Take-Home_Ex02.html" rel="" target="">
+ <span class="dropdown-text">Take home exercise 2</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -222,8 +226,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">2.0 Objectives</a></li>
   <li><a href="#task" id="toc-task" class="nav-link" data-scroll-target="#task">3.0 Task</a></li>
   <li><a href="#loading-packages" id="toc-loading-packages" class="nav-link" data-scroll-target="#loading-packages">4.0 Loading packages</a></li>
-  <li><a href="#cleaning-and-loading-data" id="toc-cleaning-and-loading-data" class="nav-link" data-scroll-target="#cleaning-and-loading-data">5.0 Cleaning and Loading data</a>
+  <li><a href="#cleaning-and-loading-data" id="toc-cleaning-and-loading-data" class="nav-link" data-scroll-target="#cleaning-and-loading-data">5.0 Cleaning and Loading data</a></li>
+  <li><a href="#store-the-data-into-rds-file." id="toc-store-the-data-into-rds-file." class="nav-link" data-scroll-target="#store-the-data-into-rds-file.">6.0 Store the data into rds file.</a></li>
+  <li><a href="#visualising-the-number-of-dengue-cases-by-village-using-a-choropleth-map" id="toc-visualising-the-number-of-dengue-cases-by-village-using-a-choropleth-map" class="nav-link" data-scroll-target="#visualising-the-number-of-dengue-cases-by-village-using-a-choropleth-map">7.0 Visualising the number of dengue cases by village using a choropleth map</a></li>
+  <li><a href="#global-spatial-autocorrelation-analysis" id="toc-global-spatial-autocorrelation-analysis" class="nav-link" data-scroll-target="#global-spatial-autocorrelation-analysis">8.0 Global Spatial Autocorrelation Analysis</a>
   <ul class="collapse">
+  <li><a href="#using-global-morans-i" id="toc-using-global-morans-i" class="nav-link" data-scroll-target="#using-global-morans-i">8.1 Using Global Moran’s I</a></li>
+  <li><a href="#using-global-morans-i-with-permutation" id="toc-using-global-morans-i-with-permutation" class="nav-link" data-scroll-target="#using-global-morans-i-with-permutation">8.2 Using Global Moran’s I with permutation</a></li>
+  <li><a href="#computing-the-local-indicator-of-spatial-association-lisa" id="toc-computing-the-local-indicator-of-spatial-association-lisa" class="nav-link" data-scroll-target="#computing-the-local-indicator-of-spatial-association-lisa">9.1 Computing the Local Indicator of Spatial Association (LISA)</a></li>
+  <li><a href="#visuaising-local-morans-i-and-p-value-we-will-visualise-the-local-spatial-autocorrelation-using-a-map-together-with-the-p-value.-this-allows-for-the-identification-of-the-clusters-and-outliers-in-the-number-of-dengue-cases-in-tainan-city-that-are-significant-at-the-0.05-level." id="toc-visuaising-local-morans-i-and-p-value-we-will-visualise-the-local-spatial-autocorrelation-using-a-map-together-with-the-p-value.-this-allows-for-the-identification-of-the-clusters-and-outliers-in-the-number-of-dengue-cases-in-tainan-city-that-are-significant-at-the-0.05-level." class="nav-link" data-scroll-target="#visuaising-local-morans-i-and-p-value-we-will-visualise-the-local-spatial-autocorrelation-using-a-map-together-with-the-p-value.-this-allows-for-the-identification-of-the-clusters-and-outliers-in-the-number-of-dengue-cases-in-tainan-city-that-are-significant-at-the-0.05-level.">9.2 Visuaising local Moran’s I and p-value We will visualise the local spatial autocorrelation using a map together with the p value. This allows for the identification of the clusters and outliers in the number of dengue cases in Tainan City that are significant at the 0.05 level.</a></li>
+  <li><a href="#creating-a-time-series-cube" id="toc-creating-a-time-series-cube" class="nav-link" data-scroll-target="#creating-a-time-series-cube">10.1 Creating a Time Series Cube</a></li>
+  <li><a href="#deriving-spatial-weight-matrix" id="toc-deriving-spatial-weight-matrix" class="nav-link" data-scroll-target="#deriving-spatial-weight-matrix">10.2 Deriving Spatial Weight Matrix</a></li>
+  <li><a href="#computing-local-gi-statistics" id="toc-computing-local-gi-statistics" class="nav-link" data-scroll-target="#computing-local-gi-statistics">10.3 Computing Local Gi* Statistics</a></li>
+  <li><a href="#mann-kendall-test" id="toc-mann-kendall-test" class="nav-link" data-scroll-target="#mann-kendall-test">10.4 Mann-Kendall Test</a></li>
   <li><a href="#performing-emerging-hotspot-analysis" id="toc-performing-emerging-hotspot-analysis" class="nav-link" data-scroll-target="#performing-emerging-hotspot-analysis">10.5 Performing Emerging Hotspot Analysis</a></li>
   <li><a href="#visualizing-the-distribution-of-ehsa-classes" id="toc-visualizing-the-distribution-of-ehsa-classes" class="nav-link" data-scroll-target="#visualizing-the-distribution-of-ehsa-classes">10.6 Visualizing the distribution of EHSA classes</a></li>
   <li><a href="#visualizing-ehsa" id="toc-visualizing-ehsa" class="nav-link" data-scroll-target="#visualizing-ehsa">10.7 Visualizing EHSA</a></li>
@@ -540,7 +555,9 @@ First 10 features:
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>dengue_boundary <span class="ot">=</span> <span class="fu">st_join</span>(village, dengue_boundary, <span class="at">join =</span> st_contains) <span class="sc">%&gt;%</span> <span class="fu">group_by</span> (VILLENG.x) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">total_cases=</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>#6.0 Store the data into rds file.</p>
+</section>
+<section id="store-the-data-into-rds-file." class="level1">
+<h1>6.0 Store the data into rds file.</h1>
 <p>This will greatly reduce the time it takes to load the data in the future.</p>
 <div class="cell">
 <details>
@@ -551,7 +568,9 @@ First 10 features:
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(village, <span class="st">"data/rds/village.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>#7.0 Visualising the number of dengue cases by village using a choropleth map</p>
+</section>
+<section id="visualising-the-number-of-dengue-cases-by-village-using-a-choropleth-map" class="level1">
+<h1>7.0 Visualising the number of dengue cases by village using a choropleth map</h1>
 <p>First, we will read the data from the rds file</p>
 <div class="cell">
 <details>
@@ -580,7 +599,9 @@ First 10 features:
 </div>
 </div>
 <p>From the map above, we can see that the number of dengue cases is concentrated in the city center. With some villages having a high number of dengue cases and some having a low number of dengue cases. The next section will perform a spatial autocorrelation analysis to determine if the spatial distribution of the dengue cases is random or if there is a clustering or dispersed pattern.</p>
-<p>#8.0 Global Spatial Autocorrelation Analysis</p>
+</section>
+<section id="global-spatial-autocorrelation-analysis" class="level1">
+<h1>8.0 Global Spatial Autocorrelation Analysis</h1>
 <p>We will be performing spatial auto correlation analysis to asses if the spatial patterns are randomly distributed or having a clustering/ dispersed pattern.</p>
 <p>The global spatial autocorrelation analysis will be performed using the <code>sfdep</code> package, using the Moran’s I statistic.</p>
 <div class="cell">
@@ -619,7 +640,8 @@ Geodetic CRS:  TWD97
 # ℹ 239 more rows</code></pre>
 </div>
 </div>
-<p>##8.1 Using Global Moran’s I</p>
+<section id="using-global-morans-i" class="level2">
+<h2 class="anchored" data-anchor-id="using-global-morans-i">8.1 Using Global Moran’s I</h2>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -642,7 +664,9 @@ Moran I statistic       Expectation          Variance
 </div>
 </div>
 <p>The test result shows that the Moran’s I value is 0.2 and the p-value is 0.001. This indicates that there is a significant spatial autocorrelation in the number of dengue cases in Tainan City, in our interest of village studies.</p>
-<p>##8.2 Using Global Moran’s I with permutation</p>
+</section>
+<section id="using-global-morans-i-with-permutation" class="level2">
+<h2 class="anchored" data-anchor-id="using-global-morans-i-with-permutation">8.2 Using Global Moran’s I with permutation</h2>
 <p>However, this is not sufficient enough, the test should be conducted in permutation</p>
 <div class="cell">
 <details>
@@ -667,7 +691,9 @@ alternative hypothesis: two.sided</code></pre>
 <p>The global Moran’s I value is 0.2 and the p-value is 0.001. This indicates that there is a significant spatial autocorrelation in the number of dengue cases in Tainan City, in our interest of village studies. This results is consistent with the previous test.</p>
 <p>#9.0 Local Spatial Autocorrelation Analysis</p>
 <p>We will now perform local spatial autocorrelation analysis to identify the clusters and outliers in the number of dengue cases in Tainan City. We will be using the <code>sfdep</code> package to perform the local spatial autocorrelation analysis.This analysis will go into the localised spatial patterns of the dengue cases in our interest of study.</p>
-<p>##9.1 Computing the Local Indicator of Spatial Association (LISA)</p>
+</section>
+<section id="computing-the-local-indicator-of-spatial-association-lisa" class="level2">
+<h2 class="anchored" data-anchor-id="computing-the-local-indicator-of-spatial-association-lisa">9.1 Computing the Local Indicator of Spatial Association (LISA)</h2>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -677,7 +703,9 @@ alternative hypothesis: two.sided</code></pre>
 <span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(local_moran)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>##9.2 Visuaising local Moran’s I and p-value We will visualise the local spatial autocorrelation using a map together with the p value. This allows for the identification of the clusters and outliers in the number of dengue cases in Tainan City that are significant at the 0.05 level.</p>
+</section>
+<section id="visuaising-local-morans-i-and-p-value-we-will-visualise-the-local-spatial-autocorrelation-using-a-map-together-with-the-p-value.-this-allows-for-the-identification-of-the-clusters-and-outliers-in-the-number-of-dengue-cases-in-tainan-city-that-are-significant-at-the-0.05-level." class="level2">
+<h2 class="anchored" data-anchor-id="visuaising-local-morans-i-and-p-value-we-will-visualise-the-local-spatial-autocorrelation-using-a-map-together-with-the-p-value.-this-allows-for-the-identification-of-the-clusters-and-outliers-in-the-number-of-dengue-cases-in-tainan-city-that-are-significant-at-the-0.05-level.">9.2 Visuaising local Moran’s I and p-value We will visualise the local spatial autocorrelation using a map together with the p value. This allows for the identification of the clusters and outliers in the number of dengue cases in Tainan City that are significant at the 0.05 level.</h2>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -741,7 +769,9 @@ alternative hypothesis: two.sided</code></pre>
 <li><p>This is useful in our case to determine the possible hot spot of dengue cases in Tainan City so that the local government can take preventive measures to reduce the spread of dengue fever.</p></li>
 <li><p>This study also allows us to uncover patterns of these hot-spots and cold spot, so as to better understand the spatial distribution of dengue cases in Tainan City.</p></li>
 </ul>
-<p>##10.1 Creating a Time Series Cube</p>
+</section>
+<section id="creating-a-time-series-cube" class="level2">
+<h2 class="anchored" data-anchor-id="creating-a-time-series-cube">10.1 Creating a Time Series Cube</h2>
 <p>The code below will group the dengue data that with have according to the TOWNNAME, VILLNAME, week and then summarise them by the total number of occurances which is the cases</p>
 <div class="cell">
 <details>
@@ -824,7 +854,9 @@ alternative hypothesis: two.sided</code></pre>
 <pre><code>[1] TRUE</code></pre>
 </div>
 </div>
-<p>##10.2 Deriving Spatial Weight Matrix</p>
+</section>
+<section id="deriving-spatial-weight-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="deriving-spatial-weight-matrix">10.2 Deriving Spatial Weight Matrix</h2>
 <p>As usual, we will need to derive a spatial weight matrix before we can compute local Gi* statistics. Code chunk below will be used to derive a spatial weight matrix by using sfdep functions and tidyverse approach.</p>
 <div class="cell">
 <details>
@@ -840,7 +872,9 @@ alternative hypothesis: two.sided</code></pre>
 <span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_wts</span>(<span class="st">"wt"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>##10.3 Computing Local Gi* Statistics</p>
+</section>
+<section id="computing-local-gi-statistics" class="level2">
+<h2 class="anchored" data-anchor-id="computing-local-gi-statistics">10.3 Computing Local Gi* Statistics</h2>
 <p>This section will focus on calculatin gthe Gi*</p>
 <div class="cell">
 <details>
@@ -863,22 +897,24 @@ alternative hypothesis: two.sided</code></pre>
 # Groups:   week [20]
    VILLCODE     week cases                  geometry nb    wt    gi_star    e_gi
    &lt;chr&gt;       &lt;int&gt; &lt;int&gt;            &lt;GEOMETRY [°]&gt; &lt;lis&gt; &lt;lis&gt;   &lt;dbl&gt;   &lt;dbl&gt;
- 1 67000350032    31     0  GEOMETRYCOLLECTION EMPTY &lt;int&gt; &lt;dbl&gt;  -0.815 0.00261
- 2 67000270011    31     1 POINT (120.2413 22.92115) &lt;int&gt; &lt;dbl&gt;   0.281 0.00393
- 3 67000370005    31     0  GEOMETRYCOLLECTION EMPTY &lt;int&gt; &lt;dbl&gt;  -0.463 0.00320
- 4 67000330004    31     0  GEOMETRYCOLLECTION EMPTY &lt;int&gt; &lt;dbl&gt;  -0.256 0.00319
- 5 67000350028    31     0  GEOMETRYCOLLECTION EMPTY &lt;int&gt; &lt;dbl&gt;  -0.895 0.00259
- 6 67000350030    31     0  GEOMETRYCOLLECTION EMPTY &lt;int&gt; &lt;dbl&gt;  -1.10  0.00295
- 7 67000370009    31     0  GEOMETRYCOLLECTION EMPTY &lt;int&gt; &lt;dbl&gt;  -0.895 0.00288
- 8 67000350017    31     0  GEOMETRYCOLLECTION EMPTY &lt;int&gt; &lt;dbl&gt;  -0.745 0.00305
- 9 67000350049    31     0  GEOMETRYCOLLECTION EMPTY &lt;int&gt; &lt;dbl&gt;   0.420 0.00259
-10 67000350018    31     0  GEOMETRYCOLLECTION EMPTY &lt;int&gt; &lt;dbl&gt;  -0.907 0.00267
+ 1 67000350032    31     0  GEOMETRYCOLLECTION EMPTY &lt;int&gt; &lt;dbl&gt;  -0.815 0.00232
+ 2 67000270011    31     1 POINT (120.2413 22.92115) &lt;int&gt; &lt;dbl&gt;   0.281 0.00375
+ 3 67000370005    31     0  GEOMETRYCOLLECTION EMPTY &lt;int&gt; &lt;dbl&gt;  -0.463 0.00305
+ 4 67000330004    31     0  GEOMETRYCOLLECTION EMPTY &lt;int&gt; &lt;dbl&gt;  -0.256 0.00293
+ 5 67000350028    31     0  GEOMETRYCOLLECTION EMPTY &lt;int&gt; &lt;dbl&gt;  -0.895 0.00278
+ 6 67000350030    31     0  GEOMETRYCOLLECTION EMPTY &lt;int&gt; &lt;dbl&gt;  -1.10  0.00306
+ 7 67000370009    31     0  GEOMETRYCOLLECTION EMPTY &lt;int&gt; &lt;dbl&gt;  -0.895 0.00263
+ 8 67000350017    31     0  GEOMETRYCOLLECTION EMPTY &lt;int&gt; &lt;dbl&gt;  -0.745 0.00310
+ 9 67000350049    31     0  GEOMETRYCOLLECTION EMPTY &lt;int&gt; &lt;dbl&gt;   0.420 0.00296
+10 67000350018    31     0  GEOMETRYCOLLECTION EMPTY &lt;int&gt; &lt;dbl&gt;  -0.907 0.00301
 # ℹ 5,150 more rows
 # ℹ 6 more variables: var_gi &lt;dbl&gt;, p_value &lt;dbl&gt;, p_sim &lt;dbl&gt;,
 #   p_folded_sim &lt;dbl&gt;, skewness &lt;dbl&gt;, kurtosis &lt;dbl&gt;</code></pre>
 </div>
 </div>
-<p>##10.4 Mann-Kendall Test</p>
+</section>
+<section id="mann-kendall-test" class="level2">
+<h2 class="anchored" data-anchor-id="mann-kendall-test">10.4 Mann-Kendall Test</h2>
 <p>The Gi* allows us to conduct trend analysis using the Mann-Kendall test. The code chunk below uses location Hainan Vil. , D06</p>
 <div class="cell">
 <details>
@@ -916,10 +952,11 @@ alternative hypothesis: two.sided</code></pre>
 <span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplotly</span>(p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="plotly html-widget html-fill-item" id="htmlwidget-71d6ebe1497dc42ea495" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-71d6ebe1497dc42ea495">{"x":{"data":[{"x":[31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50],"y":[0.28149943923759674,-0.64635332607618201,-1.0470355910647247,-1.0109932627693536,-1.648949387579183,-1.7411145852170484,-1.874601025644566,-1.9453998574154465,-1.732089794439875,-2.0774396939491284,-1.670389926758167,-1.6788144645541574,-1.7953344491110184,-2.098247243823991,-2.1092845685591022,-2.017685444448742,-0.59217278358979397,-0.8566174837431062,-0.15302051479043507,0.49287796133018957],"text":["week: 31<br />gi_star:  0.2814994","week: 32<br />gi_star: -0.6463533","week: 33<br />gi_star: -1.0470356","week: 34<br />gi_star: -1.0109933","week: 35<br />gi_star: -1.6489494","week: 36<br />gi_star: -1.7411146","week: 37<br />gi_star: -1.8746010","week: 38<br />gi_star: -1.9453999","week: 39<br />gi_star: -1.7320898","week: 40<br />gi_star: -2.0774397","week: 41<br />gi_star: -1.6703899","week: 42<br />gi_star: -1.6788145","week: 43<br />gi_star: -1.7953344","week: 44<br />gi_star: -2.0982472","week: 45<br />gi_star: -2.1092846","week: 46<br />gi_star: -2.0176854","week: 47<br />gi_star: -0.5921728","week: 48<br />gi_star: -0.8566175","week: 49<br />gi_star: -0.1530205","week: 50<br />gi_star:  0.4928780"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50],"y":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"text":["week: 31<br />gi_star: 0","week: 32<br />gi_star: 0","week: 33<br />gi_star: 0","week: 34<br />gi_star: 0","week: 35<br />gi_star: 0","week: 36<br />gi_star: 0","week: 37<br />gi_star: 0","week: 38<br />gi_star: 0","week: 39<br />gi_star: 0","week: 40<br />gi_star: 0","week: 41<br />gi_star: 0","week: 42<br />gi_star: 0","week: 43<br />gi_star: 0","week: 44<br />gi_star: 0","week: 45<br />gi_star: 0","week: 46<br />gi_star: 0","week: 47<br />gi_star: 0","week: 48<br />gi_star: 0","week: 49<br />gi_star: 0","week: 50<br />gi_star: 0"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":26.228310502283104,"r":7.3059360730593621,"b":40.182648401826491,"l":48.949771689497723},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[30.050000000000001,50.950000000000003],"tickmode":"array","ticktext":["35","40","45","50"],"tickvals":[35,40,45,50],"categoryorder":"array","categoryarray":["35","40","45","50"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"week","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-2.2393926950535668,0.62298608782465414],"tickmode":"array","ticktext":["-2.0","-1.5","-1.0","-0.5","0.0","0.5"],"tickvals":[-2,-1.5,-1,-0.5,0,0.5],"categoryorder":"array","categoryarray":["-2.0","-1.5","-1.0","-0.5","0.0","0.5"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"gi_star","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"aa6c1b333399":{"x":{},"y":{},"type":"scatter"},"aa6c277473b3":{"x":{},"y":{}}},"cur_data":"aa6c1b333399","visdat":{"aa6c1b333399":["function (y) ","x"],"aa6c277473b3":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-0ae89400e6fe030de358" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-0ae89400e6fe030de358">{"x":{"data":[{"x":[31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50],"y":[0.28149943923759674,-0.64635332607618201,-1.0470355910647247,-1.0109932627693536,-1.648949387579183,-1.7411145852170484,-1.874601025644566,-1.9453998574154465,-1.732089794439875,-2.0774396939491284,-1.670389926758167,-1.6788144645541574,-1.7953344491110184,-2.098247243823991,-2.1092845685591022,-2.017685444448742,-0.59217278358979397,-0.8566174837431062,-0.15302051479043507,0.49287796133018957],"text":["week: 31<br />gi_star:  0.2814994","week: 32<br />gi_star: -0.6463533","week: 33<br />gi_star: -1.0470356","week: 34<br />gi_star: -1.0109933","week: 35<br />gi_star: -1.6489494","week: 36<br />gi_star: -1.7411146","week: 37<br />gi_star: -1.8746010","week: 38<br />gi_star: -1.9453999","week: 39<br />gi_star: -1.7320898","week: 40<br />gi_star: -2.0774397","week: 41<br />gi_star: -1.6703899","week: 42<br />gi_star: -1.6788145","week: 43<br />gi_star: -1.7953344","week: 44<br />gi_star: -2.0982472","week: 45<br />gi_star: -2.1092846","week: 46<br />gi_star: -2.0176854","week: 47<br />gi_star: -0.5921728","week: 48<br />gi_star: -0.8566175","week: 49<br />gi_star: -0.1530205","week: 50<br />gi_star:  0.4928780"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50],"y":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"text":["week: 31<br />gi_star: 0","week: 32<br />gi_star: 0","week: 33<br />gi_star: 0","week: 34<br />gi_star: 0","week: 35<br />gi_star: 0","week: 36<br />gi_star: 0","week: 37<br />gi_star: 0","week: 38<br />gi_star: 0","week: 39<br />gi_star: 0","week: 40<br />gi_star: 0","week: 41<br />gi_star: 0","week: 42<br />gi_star: 0","week: 43<br />gi_star: 0","week: 44<br />gi_star: 0","week: 45<br />gi_star: 0","week: 46<br />gi_star: 0","week: 47<br />gi_star: 0","week: 48<br />gi_star: 0","week: 49<br />gi_star: 0","week: 50<br />gi_star: 0"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":26.228310502283104,"r":7.3059360730593621,"b":40.182648401826491,"l":48.949771689497723},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[30.050000000000001,50.950000000000003],"tickmode":"array","ticktext":["35","40","45","50"],"tickvals":[35,40,45,50],"categoryorder":"array","categoryarray":["35","40","45","50"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"week","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-2.2393926950535668,0.62298608782465414],"tickmode":"array","ticktext":["-2.0","-1.5","-1.0","-0.5","0.0","0.5"],"tickvals":[-2,-1.5,-1,-0.5,0,0.5],"categoryorder":"array","categoryarray":["-2.0","-1.5","-1.0","-0.5","0.0","0.5"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"gi_star","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"8eac4047109d":{"x":{},"y":{},"type":"scatter"},"8eac5d4856b4":{"x":{},"y":{}}},"cur_data":"8eac4047109d","visdat":{"8eac4047109d":["function (y) ","x"],"8eac5d4856b4":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
+</section>
 <section id="performing-emerging-hotspot-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="performing-emerging-hotspot-analysis">10.5 Performing Emerging Hotspot Analysis</h2>
 <div class="cell">
@@ -965,10 +1002,10 @@ alternative hypothesis: two.sided</code></pre>
   &lt;chr&gt;       &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;              
 1 67000350032 0.411 0.0125   oscilating coldspot
 2 67000270011 0.358 0.0297   oscilating coldspot
-3 67000370005 0.579 0.000406 consecutive hotspot
+3 67000370005 0.579 0.000406 oscilating hotspot 
 4 67000330004 0.421 0.0104   oscilating hotspot 
 5 67000350028 0.537 0.00105  new hotspot        
-6 67000350030 0.526 0.00132  consecutive hotspot</code></pre>
+6 67000350030 0.526 0.00132  oscilating hotspot </code></pre>
 </div>
 </div>
 <p>From the visualization, it seems like all villages have different pattern detected in terms of distribution. How significant is this result though?</p>
