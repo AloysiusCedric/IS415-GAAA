@@ -279,7 +279,9 @@ lisa <- wm_q %>% mutate(local_moran = local_moran(
   unnest(local_moran)
 ```
 
-## 9.2 Visuaising local Moran’s I and p-value We will visualise the local spatial autocorrelation using a map together with the p value. This allows for the identification of the clusters and outliers in the number of dengue cases in Tainan City that are significant at the 0.05 level.
+## 9.2 Visuaising local Moran’s I and p-value
+
+We will visualise the local spatial autocorrelation using a map together with the p value. This allows for the identification of the clusters and outliers in the number of dengue cases in Tainan City that are significant at the 0.05 level.
 
 ```{r}
 
