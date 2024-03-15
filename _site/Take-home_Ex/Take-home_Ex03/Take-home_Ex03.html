@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>IS415-GAA - Take Home Exercise 3 (Hierarchical Clustering)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">IS415-GAA</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-hands-on-excercise" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Hands-on Excercise</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-hands-on-excercise">    
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 1</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 2</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 3</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 4</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 5</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 6</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 7</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex08/Hands-on_Ex08.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 8</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-in-class-exercise-excercise" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">In Class Exercise Excercise</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-in-class-exercise-excercise">    
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex02/In-Class_Ex02.html" rel="" target="">
+ <span class="dropdown-text">In-Class Exercise 2</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex03/In-Class_Ex03.html" rel="" target="">
+ <span class="dropdown-text">In-Class Exercise 3</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex03/In-Class_Ex03_NKDE.html" rel="" target="">
+ <span class="dropdown-text">In-Class Exercise 3 NKDE</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex04/In-Class_Ex04.html" rel="" target="">
+ <span class="dropdown-text">In-Class Exercise 4</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex05/In-Class_Ex05.html" rel="" target="">
+ <span class="dropdown-text">In-Class Exercise 5</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex06/In-Class_Ex06.html" rel="" target="">
+ <span class="dropdown-text">In-Class Exercise 6</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-take-home-exercise" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Take home Exercise</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-take-home-exercise">    
+        <li>
+    <a class="dropdown-item" href="../../Take-home_Ex/Take-home_Ex01/Take-Home_Ex01.html" rel="" target="">
+ <span class="dropdown-text">Take home exercise 1</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Take-home_Ex/Take-home_Ex02/Take-Home_Ex02.html" rel="" target="">
+ <span class="dropdown-text">Take home exercise 2</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Take-home_Ex/Take-home_Ex03/Take-Home_Ex03.html" rel="" target="">
+ <span class="dropdown-text">Take home exercise 3</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#installing-and-loading-packages" id="toc-installing-and-loading-packages" class="nav-link active" data-scroll-target="#installing-and-loading-packages">Installing and Loading Packages</a></li>
+  <li><a href="#data-importation-and-cleaning" id="toc-data-importation-and-cleaning" class="nav-link" data-scroll-target="#data-importation-and-cleaning">Data importation and cleaning</a></li>
+  <li><a href="#non-spatial-hierarchical-clustering" id="toc-non-spatial-hierarchical-clustering" class="nav-link" data-scroll-target="#non-spatial-hierarchical-clustering">Non Spatial Hierarchical Clustering</a></li>
+  <li><a href="#mapping-the-clusters-non-spatial" id="toc-mapping-the-clusters-non-spatial" class="nav-link" data-scroll-target="#mapping-the-clusters-non-spatial">Mapping the clusters: Non Spatial</a></li>
+  <li><a href="#spatially-constrained-hierarchical-clustering" id="toc-spatially-constrained-hierarchical-clustering" class="nav-link" data-scroll-target="#spatially-constrained-hierarchical-clustering">Spatially Constrained Hierarchical Clustering</a></li>
+  <li><a href="#mapping-the-clusters-spatially-constrained" id="toc-mapping-the-clusters-spatially-constrained" class="nav-link" data-scroll-target="#mapping-the-clusters-spatially-constrained">Mapping the clusters: Spatially Constrained</a></li>
+  <li><a href="#protoype" id="toc-protoype" class="nav-link" data-scroll-target="#protoype">Protoype</a>
+  <ul class="collapse">
+  <li><a href="#non-spatially-contrained" id="toc-non-spatially-contrained" class="nav-link" data-scroll-target="#non-spatially-contrained">Non Spatially Contrained</a></li>
+  <li><a href="#spatially-constrained" id="toc-spatially-constrained" class="nav-link" data-scroll-target="#spatially-constrained">Spatially Constrained</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Take Home Exercise 3 (Hierarchical Clustering)</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="installing-and-loading-packages" class="level1">
+<h1>Installing and Loading Packages</h1>
+<p>The packages below will be used to perform the analysis in this document. If you do not have any of the packages installed, you can install them by running the code below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(spdep, tmap, sf, ClustGeo, </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>               cluster, tidyverse, sp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-importation-and-cleaning" class="level1">
+<h1>Data importation and cleaning</h1>
+<p>We will first load the pci data and boundary date for Vietnam into the environment</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pci <span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">"data/pci_2021.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>vn <span class="ot">=</span> <span class="fu">st_read</span>(<span class="at">dsn=</span><span class="st">"data"</span> , <span class="at">layer =</span> <span class="st">"vnm_admbnda_adm1_gov_20201027"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>lets rename the columns to make them more readable</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pci <span class="ot">&lt;-</span> pci <span class="sc">%&gt;%</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">overall_index</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Sub-Index 10: Law &amp; Order</span><span class="st">`</span>, </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">security_ind</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Good security situation in the province (%)</span><span class="st">`</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">theft_ind</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Victim of theft or break-in last year (%)</span><span class="st">`</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">police_ind</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Local police handle firm's case effectively (%)</span><span class="st">`</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">gangster_ind</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Pay money to gangsters groups (%)</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Lets check for province names to see if it is consistent with the map naming convention</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(pci<span class="sc">$</span>Province)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We notice that some province names are not consistent with the map. We need to fix this.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(vn<span class="sc">$</span>ADM1_EN)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The line of code above show names that are in pci but not in vn</p>
+<p>Let’s replace these names in pci with the names in vn for us to be able to join the two datasets</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>pci <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>Province <span class="sc">%in%</span> vn<span class="sc">$</span>ADM1_EN) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Province)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>pci <span class="ot">&lt;-</span> pci <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Province =</span> <span class="fu">case_when</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    Province <span class="sc">==</span> <span class="st">"BRVT"</span> <span class="sc">~</span> <span class="st">"Ba Ria - Vung Tau"</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    Province <span class="sc">==</span> <span class="st">"Can Tho"</span> <span class="sc">~</span> <span class="st">"Can Tho city"</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    Province <span class="sc">==</span> <span class="st">"Da Nang"</span> <span class="sc">~</span> <span class="st">"Da Nang city"</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    Province <span class="sc">==</span> <span class="st">"HCMC"</span> <span class="sc">~</span> <span class="st">"Ho Chi Minh city"</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    Province <span class="sc">==</span> <span class="st">"Hai Phong"</span> <span class="sc">~</span> <span class="st">"Hai Phong city"</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    Province <span class="sc">==</span> <span class="st">"TT-Hue"</span> <span class="sc">~</span> <span class="st">"Thua Thien Hue"</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> Province</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>lets check again for province names to see if it is consistent with the map naming convention</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pci <span class="sc">%&gt;%</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>Province <span class="sc">%in%</span> vn<span class="sc">$</span>ADM1_EN) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Province)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Looks like we’re good to go!</p>
+<p>we first need to remove the % sign in the last 4 columns of pci and convert it to integer datatype</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pci <span class="ot">&lt;-</span> pci <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">ends_with</span>(<span class="st">"ind"</span>), <span class="sc">~</span><span class="fu">as.integer</span>(<span class="fu">str_remove</span>(., <span class="st">"%"</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let us now join the two datasets to get the final dataset of pci_sf with geometry</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>pci_sf <span class="ot">&lt;-</span> <span class="fu">left_join</span>(pci, </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                     vn, <span class="at">by=</span><span class="fu">c</span>(<span class="st">"Province"</span><span class="ot">=</span><span class="st">"ADM1_EN"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Province, overall_index, security_ind, theft_ind, police_ind, gangster_ind, geometry)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We will now convert the pci_sf to simple feature object</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>pci_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(pci_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We will store the files in rds for easy loading in the future</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(pci_sf, <span class="st">"data/rds/pci_sf.rds"</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(vn, <span class="st">"data/rds/vn.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Reading the data for processing</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>pci_sf <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/pci_sf.rds"</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>vn <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/vn.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Extracting the clustering variables from the pci_sf simple feature object into data.frame.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>cluster_vars <span class="ot">&lt;-</span> pci_sf <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_set_geometry</span>(<span class="cn">NULL</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">"Province"</span>,<span class="st">"overall_index"</span>, <span class="st">"security_ind"</span>, <span class="st">"theft_ind"</span>, <span class="st">"police_ind"</span>, <span class="st">"gangster_ind"</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cluster_vars,<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 6
+   Province         overall_index security_ind theft_ind police_ind gangster_ind
+   &lt;chr&gt;                    &lt;dbl&gt;        &lt;int&gt;     &lt;int&gt;      &lt;int&gt;        &lt;int&gt;
+ 1 An Giang                  6.86           72        16         83            2
+ 2 Ba Ria - Vung T…          7.41           77         9         84            1
+ 3 Bac Giang                 8.6            87         3         87            1
+ 4 Bac Kan                   8.02           87         2         97            1
+ 5 Bac Lieu                  8.02           91         9         94            0
+ 6 Bac Ninh                  7.09           85         6         96            3
+ 7 Ben Tre                   7.83           81         8         92            1
+ 8 Binh Dinh                 8.04           73         4         81            1
+ 9 Binh Duong                6.84           61         9         73            0
+10 Binh Phuoc                7.49           60         7         76            0</code></pre>
+</div>
+</div>
+<p>We will now delete the Province column and assign rows with province name for dendrogram visualization in later analysis</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>pci_ict <span class="ot">&lt;-</span> <span class="fu">select</span>(cluster_vars, <span class="fu">c</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">6</span>))</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pci_ict, <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 5
+   overall_index security_ind theft_ind police_ind gangster_ind
+           &lt;dbl&gt;        &lt;int&gt;     &lt;int&gt;      &lt;int&gt;        &lt;int&gt;
+ 1          6.86           72        16         83            2
+ 2          7.41           77         9         84            1
+ 3          8.6            87         3         87            1
+ 4          8.02           87         2         97            1
+ 5          8.02           91         9         94            0
+ 6          7.09           85         6         96            3
+ 7          7.83           81         8         92            1
+ 8          8.04           73         4         81            1
+ 9          6.84           61         9         73            0
+10          7.49           60         7         76            0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">row.names</span>(pci_ict) <span class="ot">&lt;-</span> cluster_vars<span class="sc">$</span><span class="st">"Province"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Setting row names on a tibble is deprecated.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pci_ict,<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 5
+   overall_index security_ind theft_ind police_ind gangster_ind
+           &lt;dbl&gt;        &lt;int&gt;     &lt;int&gt;      &lt;int&gt;        &lt;int&gt;
+ 1          6.86           72        16         83            2
+ 2          7.41           77         9         84            1
+ 3          8.6            87         3         87            1
+ 4          8.02           87         2         97            1
+ 5          8.02           91         9         94            0
+ 6          7.09           85         6         96            3
+ 7          7.83           81         8         92            1
+ 8          8.04           73         4         81            1
+ 9          6.84           61         9         73            0
+10          7.49           60         7         76            0</code></pre>
+</div>
+</div>
+<p>Computing the proximity matrix</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>proxmat <span class="ot">&lt;-</span> <span class="fu">dist</span>(pci_ict, <span class="at">method =</span> <span class="st">'euclidean'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Lets list the content of proxmat for visual inspection.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>proxmat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   An Giang Ba Ria - Vung Tau Bac Giang   Bac Kan  Bac Lieu
+Ba Ria - Vung Tau  8.735130                                                
+Bac Giang         20.347668         12.100252                              
+Bac Kan           24.886655         17.842985 10.066598                    
+Bac Lieu          23.159136         17.244480 10.116146  8.660254          
+Bac Ninh          20.953589         14.869512 10.013995  5.085755  7.672346
+Ben Tre           15.097712          9.009795  9.305531  9.850690 10.297383
+Binh Dinh         12.304162          7.099077 15.274606 21.354166 22.781580
+Binh Duong        16.552957         19.450576 30.200954 36.102526 36.638674
+Binh Phuoc        16.685230         18.921057 29.465778 34.587294 35.906558
+Binh Thuan        13.157872         14.136057 23.460818 31.389654 29.938444
+Ca Mau            14.213360          8.395004 12.511371 21.533462 19.866806
+Can Tho city      16.439589          8.831851  4.744776 11.420267  9.456347
+Cao Bang          15.434406          8.366983  9.306605 10.510761 13.018299
+Da Nang city      16.598747         11.875559 14.595904 12.537687 16.558792
+Dak Lak           11.590863          6.164544 11.327952 13.428511 13.759539
+Dak Nong          14.110833         10.052069 13.709850 12.636154 14.023994
+Dien Bien         11.372616          4.795925 12.463771 16.165902 17.729535
+Dong Nai          12.411128         15.301294 25.872814 32.968787 31.999077
+Dong Thap         10.450359          4.505830 10.459904 16.911641 14.317947
+Gia Lai           21.874737         23.537748 32.955438 39.902412 40.487066
+Ho Chi Minh city   8.307226          6.261190 17.108173 22.850024 23.262064
+Ha Giang          16.548305          8.668154  5.538267 14.732875 12.886334
+Ha Nam            13.786501          6.171232  9.756557 17.855251 17.771044
+Ha Noi            15.878819          7.213349  6.846671 14.374425 15.415061
+Ha Tinh           15.984005          7.378950  7.298657 15.297176 16.031332
+Hai Duong         16.302052          7.687809  7.399791 13.895470 15.877157
+Hai Phong city    20.075361         16.799155 20.286274 17.088666 22.204110
+Hau Giang         12.746611         10.489023 15.234911 14.498997 14.464470
+Hoa Binh           9.434114         10.356158 20.417054 22.141186 23.605764
+Hung Yen          19.909016         13.167551 10.016232  6.403132 11.747344
+Khanh Hoa          6.752251          7.144816 18.518664 22.296908 22.894368
+Kien Giang         8.185377         10.453751 21.469942 28.254196 27.116408
+Kon Tum           12.129406         10.051865 18.919094 26.564188 26.280337
+Lai Chau          12.248628          6.820440 10.518940 12.797222 11.864607
+Lam Dong          21.557885         13.022784  2.485236 11.091691 12.001067
+Lang Son          15.429222          8.673546 10.885959 11.875054 15.166308
+Lao Cai           10.909633          3.769828 11.204147 18.868559 17.748873
+Long An           17.292357         22.026169 33.354106 39.140772 39.102430
+Nam Dinh          23.611362         16.433530  7.350211  4.144442  5.493305
+Nghe An           17.504559         18.493461 28.287983 34.121407 35.458009
+Ninh Binh         21.453207         18.547334 22.595630 32.162850 30.748153
+Ninh Thuan        18.180968         10.678769  4.690416  9.283124  9.652792
+Phu Tho           14.505947          6.481512  6.941765 11.587066 12.052390
+Phu Yen           16.442266         14.212727 17.785458 14.502583 16.653075
+Quang Binh         3.002815          7.948358 19.712740 25.101014 23.771010
+Quang Nam          7.125616          4.702010 15.353814 22.182840 20.714208
+Quang Ngai        18.185777         14.631815 17.314505 13.641704 17.750946
+Quang Ninh        21.669391         13.582710  2.289126 11.225333 10.247346
+Quang Tri         10.724104         10.459297 20.525896 23.420880 25.486028
+Soc Trang          9.284934          2.702314 11.506937 16.340245 15.297176
+Son La            16.873722         10.396634 10.944958 10.104261 13.967681
+Thua Thien Hue    28.288162         21.421569 12.126933  5.301783  7.287585
+Tay Ninh          13.940459          9.486880 14.083522 13.650509 16.165902
+Thai Binh         23.910031         16.857879 10.677547  3.351179 11.055786
+Thai Nguyen       21.865555         14.807093  6.517369  5.197317  5.478330
+Thanh Hoa         26.890958         20.646067 13.246222  4.243819  8.307226
+Tien Giang         9.852837          7.941845 15.878652 16.963915 17.400414
+Tra Vinh           2.844293          7.215435 19.106899 23.806293 22.533078
+Tuyen Quang       18.656302         13.419989 15.402922 13.222950 18.434923
+Vinh Long         11.549758          5.196768  9.339813 14.187350 12.420986
+Vinh Phuc         22.602586         15.610010  9.598797  3.323266 10.297772
+Yen Bai           14.926821          6.791355  9.039115 13.493243 15.970836
+                   Bac Ninh   Ben Tre Binh Dinh Binh Duong Binh Phuoc
+Ba Ria - Vung Tau                                                    
+Bac Giang                                                            
+Bac Kan                                                              
+Bac Lieu                                                             
+Bac Ninh                                                             
+Ben Tre            6.367700                                          
+Binh Dinh         19.439715 14.179002                                
+Binh Duong        33.512125 27.640190 15.344054                      
+Binh Phuoc        32.173902 26.440794 14.293443   3.797697           
+Binh Thuan        28.781037 23.103439 12.384329  11.362905  13.637452
+Ca Mau            19.675795 15.107353  9.578225  20.494253  21.037892
+Can Tho city       9.543500  6.573553 13.800322  27.861818  27.313264
+Cao Bang           8.429567  3.905125 11.768776  25.772856  24.290443
+Da Nang city      10.307284  7.352721 14.184907  26.411126  24.310658
+Dak Lak            9.753440  3.891581 11.504264  24.132387  22.978285
+Dak Nong           9.274271  4.732536 14.550107  26.403212  24.841178
+Dien Bien         13.788492  8.133394  6.734983  20.033971  18.628003
+Dong Nai          30.083245 24.199347 13.075936   7.748813  10.305028
+Dong Thap         13.775228  8.544993 11.045651  22.962021  22.852153
+Gia Lai           37.699210 32.079084 18.553191   6.821503   9.165501
+Ho Chi Minh city  19.950361 14.379044  4.708121  13.964756  13.389582
+Ha Giang          13.359495 10.099629 12.372049  26.189380  25.982381
+Ha Nam            15.843008 11.640623  7.405836  21.215051  20.931720
+Ha Noi            13.153691  9.453042  8.640376  23.625243  22.848799
+Ha Tinh           14.282160 10.347101  8.366696  23.184857  22.502180
+Hai Duong         12.899984  9.274158  8.312406  23.575243  22.517940
+Hai Phong city    15.735578 13.527808 17.321342  27.259143  24.497845
+Hau Giang         10.257271  6.089204 15.818979  26.655283  25.337790
+Hoa Binh          18.921744 13.522071 11.237299  17.521555  15.599244
+Hung Yen           5.557302  5.834381 16.155498  30.371304  28.623270
+Khanh Hoa         19.138746 13.192422  7.821004  15.087216  13.820984
+Kien Giang        25.219915 19.310684  9.713166  10.908785  12.139691
+Kon Tum           24.290212 18.825100  6.759356  12.374849  13.079694
+Lai Chau           9.008885  3.209299 12.954632  25.534731  24.630063
+Lam Dong          11.797801 11.050905 15.199329  30.179390  29.418975
+Lang Son          10.131140  5.831261 10.817694  24.619149  22.872691
+Lao Cai           16.419756 11.180411  7.213106  19.775260  19.701381
+Long An           36.083305 30.177079 18.974731   5.003239   7.564450
+Nam Dinh           5.460998  9.185429 20.619408  35.405649  34.291435
+Nghe An           31.986999 26.364918 13.125989   4.293670   3.464116
+Ninh Binh         30.676825 26.253198 16.201114  19.755002  21.587487
+Ninh Thuan         7.159616  6.561471 14.771378  29.403700  28.530897
+Phu Tho            9.443326  4.593735 10.875702  25.188269  24.207445
+Phu Yen           11.005889  8.783188 18.175481  28.746689  26.870087
+Quang Binh        21.401168 15.579012 10.300607  14.799409  15.074813
+Quang Nam         19.063643 13.379391  7.751774  16.816956  17.089836
+Quang Ngai        11.374726  9.434744 17.149603  28.368238  26.116056
+Quang Ninh        11.403526 11.183845 16.793002  31.489886  30.957784
+Quang Tri         20.642095 15.333053  8.519836  14.594643  12.389677
+Soc Trang         13.219565  7.072263  9.327722  21.453541  20.813959
+Son La             8.448929  5.197538 13.042580  26.734938  24.940898
+Thua Thien Hue     8.519836 13.537740 25.536172  40.302358  39.047914
+Tay Ninh          10.914325  6.257164 12.584117  24.502245  22.671623
+Thai Binh          6.163449  9.189608 19.677693  34.230916  32.465676
+Thai Nguyen        4.546691  7.746380 19.261799  33.913786  32.881247
+Thanh Hoa          6.139129 12.041931 24.859895  39.283157  37.817785
+Tien Giang        13.416501  7.776638 12.321120  22.295515  20.907475
+Tra Vinh          20.273256 14.122638 10.333170  15.687651  15.559849
+Tuyen Quang       12.124360  9.774093 14.243721  26.496558  24.127828
+Vinh Long         10.684568  5.487768 11.717615  24.523917  23.979158
+Vinh Phuc          4.393131  7.884161 18.735957  33.360637  31.710371
+Yen Bai           11.977015  7.681465  7.878985  22.865835  21.495881
+                  Binh Thuan    Ca Mau Can Tho city  Cao Bang Da Nang city
+Ba Ria - Vung Tau                                                         
+Bac Giang                                                                 
+Bac Kan                                                                   
+Bac Lieu                                                                  
+Bac Ninh                                                                  
+Ben Tre                                                                   
+Binh Dinh                                                                 
+Binh Duong                                                                
+Binh Phuoc                                                                
+Binh Thuan                                                                
+Ca Mau             11.534661                                              
+Can Tho city       21.018014 10.789926                                    
+Cao Bang           22.038351 14.295877     7.483422                       
+Da Nang city       24.963301 19.124320    13.001696  5.750000             
+Dak Lak            20.147022 13.657705     8.124432  4.691951     7.142612
+Dak Nong           23.632393 17.584948    10.817990  5.386734     4.705784
+Dien Bien          17.055310 11.726824    10.050119  5.745616     8.125245
+Dong Nai            4.393461 14.836068    23.240103 23.066825    25.045576
+Dong Thap          15.910110  8.218126     6.507542  9.507728    13.897640
+Gia Lai            12.811905 22.421474    31.273631 30.034274    31.320921
+Ho Chi Minh city   10.872516 10.346864    14.668609 12.928144    14.777835
+Ha Giang           18.429281  7.356874     4.143441 10.059945    15.685662
+Ha Nam             14.470121  5.491812     8.605957 10.490191    15.007052
+Ha Noi             17.763246  8.140031     6.482253  7.616430    12.693404
+Ha Tinh            17.073266  7.338229     6.964488  8.518363    13.610658
+Hai Duong          18.534101  9.592711     7.424931  6.867314    11.576809
+Hai Phong city     28.264410 24.069119    19.032866 11.588425     6.251728
+Hau Giang          23.666485 18.294505    11.917735  8.127017     7.416259
+Hoa Binh           18.497786 17.973205    17.412972 12.295381    10.509467
+Hung Yen           26.913582 18.512593     9.870947  5.048762     6.340544
+Khanh Hoa          14.257521 13.993859    15.461811 11.962023    12.247551
+Kien Giang          5.305130 11.270563    18.526740 18.417451    20.651634
+Kon Tum             5.874019  8.321064    17.000753 17.234106    20.202398
+Lai Chau           20.664852 13.416441     6.668013  5.330066     8.705866
+Lam Dong           23.512176 12.455184     6.454154 10.282145    15.567916
+Lang Son           21.815868 14.912039     9.448301  2.305125     4.700649
+Lao Cai            12.683726  4.829337     8.616844 10.501981    14.868897
+Long An            13.351794 23.432670    30.677720 28.794029    29.160137
+Nam Dinh           29.525643 19.130039     8.726105 10.593965    14.097503
+Nghe An            12.083046 19.354803    26.495602 24.042232    24.718544
+Ninh Binh          10.569886 11.419146    21.954508 25.020000    29.275466
+Ninh Thuan         23.371136 13.445237     4.904376  7.488184    12.041611
+Phu Tho            19.900254 11.073577     4.244950  3.745985     9.327642
+Phu Yen            27.274576 22.147977    15.297268  9.696102     5.917508
+Quang Binh         10.873826 12.452827    16.221726 15.463363    17.039604
+Quang Nam          10.126085  7.418922    12.253036 13.044850    16.218064
+Quang Ngai         27.576514 22.203155    15.624199  8.726076     3.319172
+Quang Ninh         24.116221 12.803597     5.877721 11.428403    16.771431
+Quang Tri          16.434062 16.763162    18.147950 13.315498    12.273549
+Soc Trang          16.252126 10.026844     7.703772  7.169163    10.777031
+Son La             23.884390 16.582524     9.701319  2.478790     3.875165
+Thua Thien Hue     34.589341 24.096823    13.673346 14.934537    17.423917
+Tay Ninh           22.580602 17.103169    11.662114  4.900214     3.003265
+Thai Binh          30.397368 21.169988    11.759120  8.852621    10.141321
+Thai Nguyen        27.964050 17.731782     7.300110  9.451793    13.195033
+Thanh Hoa          34.424067 24.646298    14.081992 13.650938    14.937055
+Tien Giang         20.109938 16.160953    12.371455  7.812560     7.361630
+Tra Vinh           12.386912 12.891610    15.298500 13.929426    15.335462
+Tuyen Quang        25.716920 19.953556    14.493892  7.074807     3.351179
+Vinh Long          18.519722 10.657997     5.386502  7.001828    11.225333
+Vinh Phuc          29.274441 20.031977    10.570695  7.988116     9.613662
+Yen Bai            18.936409 11.273048     8.133394  4.710085     8.776810
+                    Dak Lak  Dak Nong Dien Bien  Dong Nai Dong Thap   Gia Lai
+Ba Ria - Vung Tau                                                            
+Bac Giang                                                                    
+Bac Kan                                                                      
+Bac Lieu                                                                     
+Bac Ninh                                                                     
+Ben Tre                                                                      
+Binh Dinh                                                                    
+Binh Duong                                                                   
+Binh Phuoc                                                                   
+Binh Thuan                                                                   
+Ca Mau                                                                       
+Can Tho city                                                                 
+Cao Bang                                                                     
+Da Nang city                                                                 
+Dak Lak                                                                      
+Dak Nong           4.589390                                                  
+Dien Bien          5.567773  7.877665                                        
+Dong Nai          20.836506 23.979627 17.639504                              
+Dong Thap          7.089436 11.026223  8.442180 17.743396                    
+Gia Lai           28.775239 31.545791 24.433929 10.500971 26.723624          
+Ho Chi Minh city  10.919712 14.284873  7.630885 10.817028 10.198039 18.038074
+Ha Giang          10.540821 13.940459 10.775695 21.154973  6.559909 28.862503
+Ha Nam            10.104895 14.248031  8.432224 16.673479  7.120786 23.710810
+Ha Noi             9.058057 12.369353  7.419171 19.850249  8.033237 26.421877
+Ha Tinh            9.919521 13.182352  7.836428 19.314784  8.124925 25.812015
+Hai Duong          8.892604 11.844024  6.788527 20.333775  9.113336 26.476888
+Hai Phong city    12.968284 10.072184 12.457323 27.616524 19.545028 32.435937
+Hau Giang          5.100000  3.622499  9.644278 23.796008 10.870515 31.968741
+Hoa Binh          10.163248 10.396350  8.383370 17.117815 14.003660 23.440043
+Hung Yen           8.446088  7.395194 10.504670 27.927771 13.601651 34.542895
+Khanh Hoa          9.541090 11.497169  6.784991 13.316771 11.095445 20.518372
+Kien Giang        15.978889 19.238046 13.202788  5.002889 12.890555 14.747071
+Kon Tum           15.970523 19.544823 12.249608  7.682812 12.710724 14.461314
+Lai Chau           2.564683  5.221121  7.180703 21.728543  6.293878 30.112695
+Lam Dong          12.865959 15.131437 13.059387 26.082118 11.876380 32.609387
+Lang Son           5.585123  5.871635  4.919604 22.532323 10.724034 28.932722
+Lao Cai            9.174770 13.245713  7.562070 14.787576  4.691279 22.893012
+Long An           26.479896 28.775552 23.112256  9.110483 25.177045  8.905195
+Nam Dinh          12.805471 13.097236 15.842980 31.479074 14.602411 38.958400
+Nghe An           23.065179 25.319755 18.412050  9.497500 22.320654  7.211442
+Ninh Binh         24.372320 28.372918 21.424474 14.355835 19.088533 18.056810
+Ninh Thuan         8.367945 11.007270 11.001164 25.225037  9.280603 32.710868
+Phu Tho            5.099373  7.816399  6.083165 21.499107  6.496345 29.017298
+Phu Yen            8.602325  5.006246 11.874346 27.021473 15.305558 34.263894
+Quang Binh        11.967105 15.101129 10.872097 10.247126 10.195141 19.629987
+Quang Nam         10.396350 14.328001  8.893256 11.422614  6.484474 20.494607
+Quang Ngai         9.490395  5.938022 11.093823 27.357551 16.433578 33.615764
+Quang Ninh        13.207407 15.678906 14.403086 26.816480 11.490104 33.974867
+Quang Tri         11.893229 13.121601  8.392592 14.935625 14.778105 19.990600
+Soc Trang          4.610868  8.159510  5.125466 17.373201  3.872983 25.829288
+Son La             6.169895  5.221121  7.005205 24.625913 11.834800 31.145138
+Thua Thien Hue    17.343875 16.683000 20.489707 36.547093 19.548711 43.961442
+Tay Ninh           5.099029  3.009585  6.082763 22.718981 11.587511 29.563777
+Thai Binh         12.413803 11.121601 14.391789 31.703352 16.712020 38.155798
+Thai Nguyen       11.189799 11.937508 14.498997 29.862009 12.922945 37.511540
+Thanh Hoa         15.691428 14.474750 19.319172 35.927105 19.235426 43.337311
+Tien Giang         5.009601  4.690800  6.487681 19.975187  9.983607 27.770216
+Tra Vinh          10.681016 13.076758  9.438135 11.916883  9.624968 21.027794
+Tuyen Quang        9.701675  7.681797  9.006420 25.807024 15.897786 31.148369
+Vinh Long          4.359082  8.371625  7.483482 19.979830  3.349761 28.583324
+Vinh Phuc         11.027620 10.347024 13.513848 30.567833 15.332087 37.248297
+Yen Bai            6.789411  9.344175  4.370629 20.161947  9.057593 26.420373
+                  Ho Chi Minh city  Ha Giang    Ha Nam    Ha Noi   Ha Tinh
+Ba Ria - Vung Tau                                                         
+Bac Giang                                                                 
+Bac Kan                                                                   
+Bac Lieu                                                                  
+Bac Ninh                                                                  
+Ben Tre                                                                   
+Binh Dinh                                                                 
+Binh Duong                                                                
+Binh Phuoc                                                                
+Binh Thuan                                                                
+Ca Mau                                                                    
+Can Tho city                                                              
+Cao Bang                                                                  
+Da Nang city                                                              
+Dak Lak                                                                   
+Dak Nong                                                                  
+Dien Bien                                                                 
+Dong Nai                                                                  
+Dong Thap                                                                 
+Gia Lai                                                                   
+Ho Chi Minh city                                                          
+Ha Giang                 13.662811                                        
+Ha Nam                    8.545502  6.279777                              
+Ha Noi                   10.912053  5.225179  4.244066                    
+Ha Tinh                  10.966057  5.008992  4.349897  1.650000          
+Hai Duong                10.981480  6.782514  5.419603  1.802776  2.668801
+Hai Phong city           18.106024 21.424474 20.063960 17.844035 18.602261
+Hau Giang                14.537816 15.001763 15.105790 14.074885 14.909088
+Hoa Binh                  9.380965 18.513695 15.396237 15.591741 16.011524
+Hung Yen                 17.525550 13.040801 14.346710 11.029053 12.041698
+Khanh Hoa                 5.333751 15.685104 12.052390 13.082813 13.236408
+Kien Giang                6.782802 16.816956 12.611804 15.656388 15.245983
+Kon Tum                   6.485561 14.502583  9.644071 12.688593 12.072982
+Lai Chau                 12.372263  9.601463 10.496900  9.289327 10.096143
+Lam Dong                 17.592282  6.177378 10.006178  6.775138  7.000714
+Lang Son                 12.282707 11.489652 10.935854  8.211918  9.002005
+Lao Cai                   7.336764  6.708808  3.816084  6.197548  5.834732
+Long An                  16.613356 29.164664 24.228289 27.000817 26.648144
+Nam Dinh                 21.913247 11.934639 16.023183 12.902097 13.679532
+Nghe An                  12.934125 24.720000 19.548514 21.588722 21.126675
+Ninh Binh                16.945563 18.088253 15.167495 18.221262 17.278105
+Ninh Thuan               15.601590  7.282335  9.498968  7.357778  8.498847
+Phu Tho                  11.970902  6.408814  7.755778  5.106701  5.858746
+Phu Yen                  17.413791 18.577107 18.442042 16.794297 17.731241
+Quang Binh                6.000075 15.704270 12.042296 14.664842 14.703336
+Quang Nam                 5.254370 10.908785  7.374578 10.308254 10.105226
+Quang Ngai               17.365555 18.628068 18.175481 15.944604 16.856361
+Quang Ninh               18.555929  5.925276 10.722877  8.293033  8.602378
+Quang Tri                 7.213349 18.411953 14.110833 14.737792 15.056228
+Soc Trang                 8.660254  8.604208  7.981579  7.970753  8.186232
+Son La                   14.337451 12.369515 12.583644  9.603666 10.494613
+Thua Thien Hue           26.924563 16.832258 21.154501 17.867692 18.603035
+Tay Ninh                 12.776165 14.181523 13.494532 11.577742 12.345428
+Thai Binh                21.456272 14.917051 17.288852 13.587233 14.462932
+Thai Nguyen              20.270730 10.677870 14.478401 11.638832 12.531117
+Thanh Hoa                25.844179 17.692360 21.086489 17.957620 18.921564
+Tien Giang               11.046828 14.505502 13.453639 12.767463 13.337301
+Tra Vinh                  7.002857 15.276924 12.569869 14.283028 14.242416
+Tuyen Quang              15.653102 16.776841 15.811401 13.115521 13.962822
+Vinh Long                11.058069  7.216931  7.945873  7.685545  8.327551
+Vinh Phuc                20.189425 13.791392 15.881817 12.489996 13.528581
+Yen Bai                  10.081667  8.660277  6.957701  4.275617  5.109051
+                  Hai Duong Hai Phong city Hau Giang  Hoa Binh  Hung Yen
+Ba Ria - Vung Tau                                                       
+Bac Giang                                                               
+Bac Kan                                                                 
+Bac Lieu                                                                
+Bac Ninh                                                                
+Ben Tre                                                                 
+Binh Dinh                                                               
+Binh Duong                                                              
+Binh Phuoc                                                              
+Binh Thuan                                                              
+Ca Mau                                                                  
+Can Tho city                                                            
+Cao Bang                                                                
+Da Nang city                                                            
+Dak Lak                                                                 
+Dak Nong                                                                
+Dien Bien                                                               
+Dong Nai                                                                
+Dong Thap                                                               
+Gia Lai                                                                 
+Ho Chi Minh city                                                        
+Ha Giang                                                                
+Ha Nam                                                                  
+Ha Noi                                                                  
+Ha Tinh                                                                 
+Hai Duong                                                               
+Hai Phong city    16.462673                                             
+Hau Giang         13.821447      12.251628                              
+Hoa Binh          14.989076      11.658542 10.555075                    
+Hung Yen          10.103960      11.446641  9.961446 15.976683          
+Khanh Hoa         12.806639      14.800595 11.619225  4.529724 16.436545
+Kien Giang        16.208717      23.832333 19.011809 13.490771 23.309279
+Kon Tum           13.201151      23.567681 20.077739 15.168718 21.924242
+Lai Chau           9.491133      14.676253  5.544330 12.043604  8.763310
+Lam Dong           7.225130      20.906843 17.011670 21.298190 11.046379
+Lang Son           7.072878       9.949894  8.781549 11.088751  5.832632
+Lao Cai            7.281456      19.899749 13.787763 13.781205 15.000853
+Long An           27.064813      30.028695 28.447863 19.493899 33.391917
+Nam Dinh          12.903647      19.476265 14.484202 22.457535  8.134378
+Nghe An           21.331969      25.379852 26.038481 16.951345 28.412689
+Ninh Binh         19.265108      33.320720 28.948921 25.984488 29.145538
+Ninh Thuan         7.682246      18.057489 11.916480 17.985441  8.073717
+Phu Tho            5.200808      15.170023  9.591746 13.687951  7.698727
+Phu Yen           16.095913       8.841742  4.900000 11.458255  9.764036
+Quang Binh        15.117791      20.585782 14.117847 10.000320 20.076892
+Quang Nam         11.090541      20.688569 14.072530 12.152732 17.750608
+Quang Ngai        14.866082       5.101529  7.875633 11.560277  8.191605
+Quang Ninh         9.118355      22.495724 17.038591 22.370516 12.041860
+Quang Tri         14.032195      13.198034 13.769274  4.474025 17.191931
+Soc Trang          8.369761      16.031472  8.553835 10.540517 11.832367
+Son La             8.544027       9.488182  8.368130 12.395160  3.886181
+Thua Thien Hue    17.759065      22.005236 18.073185 26.628436 11.449996
+Tay Ninh          10.727726       8.135410  5.831989  8.676457  7.572853
+Thai Binh         12.751192      14.191438 13.561066 20.112884  4.268595
+Thai Nguyen       11.748719      18.894486 13.081651 21.047565  7.616718
+Thanh Hoa         17.636216      19.235449 15.624881 24.495308  9.540026
+Tien Giang        12.423691      11.381252  4.813325  6.484821 11.436437
+Tra Vinh          14.605646      18.721755 12.415800  8.310385 18.648241
+Tuyen Quang       11.721642       5.156830 10.686557 11.706242  7.201729
+Vinh Long          8.370042      17.179767  8.306841 13.203651 10.690725
+Vinh Phuc         11.757976      14.322346 12.387994 19.280622  3.469870
+Yen Bai            3.000150      13.638625 11.491044 12.398488  8.548269
+                  Khanh Hoa Kien Giang   Kon Tum  Lai Chau  Lam Dong  Lang Son
+Ba Ria - Vung Tau                                                             
+Bac Giang                                                                     
+Bac Kan                                                                       
+Bac Lieu                                                                      
+Bac Ninh                                                                      
+Ben Tre                                                                       
+Binh Dinh                                                                     
+Binh Duong                                                                    
+Binh Phuoc                                                                    
+Binh Thuan                                                                    
+Ca Mau                                                                        
+Can Tho city                                                                  
+Cao Bang                                                                      
+Da Nang city                                                                  
+Dak Lak                                                                       
+Dak Nong                                                                      
+Dien Bien                                                                     
+Dong Nai                                                                      
+Dong Thap                                                                     
+Gia Lai                                                                       
+Ho Chi Minh city                                                              
+Ha Giang                                                                      
+Ha Nam                                                                        
+Ha Noi                                                                        
+Ha Tinh                                                                       
+Hai Duong                                                                     
+Hai Phong city                                                                
+Hau Giang                                                                     
+Hoa Binh                                                                      
+Hung Yen                                                                      
+Khanh Hoa                                                                     
+Kien Giang         9.303897                                                   
+Kon Tum           10.870897   5.487158                                        
+Lai Chau          11.219786  16.764131 16.830639                              
+Lam Dong          19.295142  21.901826 18.839875 12.215568                    
+Lang Son          11.048421  18.083697 16.806618  6.959885 11.579469          
+Lao Cai           10.052741  10.294664  8.569457  9.348390 11.793901 11.000018
+Long An           17.331246  12.728692 15.557509 27.840778 33.605738 27.762509
+Nam Dinh          21.878211  26.728891 25.050208 11.664583  8.835587 12.421856
+Nghe An           14.526421  11.635480 11.273158 24.630390 28.026102 22.696962
+Ninh Binh         21.611997  14.602085 11.000891 24.544564 21.947412 25.125517
+Ninh Thuan        16.583151  20.579563 18.792342  7.799237  6.733231  9.224104
+Phu Tho           12.124949  16.774889 15.332645  4.761554  8.090049  5.398555
+Phu Yen           13.965400  22.479433 23.303596  9.517226 19.326999  9.653683
+Quang Binh         6.356855   5.831989  9.489384 12.848735 20.722357 15.323511
+Quang Nam          7.938016   6.613592  7.161068 10.913409 16.161485 13.229607
+Quang Ngai        14.177673  23.014971 23.048861 10.818521 18.417950  7.939295
+Quang Ninh        20.278817  22.505841 19.844647 12.166199  3.000817 13.078547
+Quang Tri          4.552197  11.916795 12.577158 13.964530 21.022845 11.799665
+Soc Trang          8.130738  12.456581 12.512494  4.755302 12.729823  7.874319
+Son La            12.845482  20.092011 18.953891  7.144256 11.799191  2.243301
+Thua Thien Hue    26.523921  31.767293 30.138009 16.147929 13.154045 16.589503
+Tay Ninh           9.951688  18.202022 18.139815  6.675515 15.150828  4.147590
+Thai Binh         20.561053  27.103955 25.370536 12.258715 11.406244  9.714530
+Thai Nguyen       20.348916  25.081086 23.547611 10.024390  8.370956 11.401772
+Thanh Hoa         24.961653  31.081853 29.858066 14.815968 14.596835 15.132776
+Tien Giang         7.364788  15.364492 16.553093  6.261190 17.177939  7.652614
+Tra Vinh           5.022041   7.421482 10.723922 11.411437 20.100756 13.767095
+Tuyen Quang       13.464060  21.703649 20.664271 11.232457 15.879748  5.442803
+Vinh Long         11.225845  15.045667 14.767478  3.411744 11.066892  8.494704
+Vinh Phuc         19.554028  25.919539 24.270155 10.925731 10.677195  9.061766
+Yen Bai           10.817435  15.867401 13.612586  7.946377  9.336830  4.360837
+                    Lao Cai   Long An  Nam Dinh   Nghe An Ninh Binh Ninh Thuan
+Ba Ria - Vung Tau                                                             
+Bac Giang                                                                     
+Bac Kan                                                                       
+Bac Lieu                                                                      
+Bac Ninh                                                                      
+Ben Tre                                                                       
+Binh Dinh                                                                     
+Binh Duong                                                                    
+Binh Phuoc                                                                    
+Binh Thuan                                                                    
+Ca Mau                                                                        
+Can Tho city                                                                  
+Cao Bang                                                                      
+Da Nang city                                                                  
+Dak Lak                                                                       
+Dak Nong                                                                      
+Dien Bien                                                                     
+Dong Nai                                                                      
+Dong Thap                                                                     
+Gia Lai                                                                       
+Ho Chi Minh city                                                              
+Ha Giang                                                                      
+Ha Nam                                                                        
+Ha Noi                                                                        
+Ha Tinh                                                                       
+Hai Duong                                                                     
+Hai Phong city                                                                
+Hau Giang                                                                     
+Hoa Binh                                                                      
+Hung Yen                                                                      
+Khanh Hoa                                                                     
+Kien Giang                                                                    
+Kon Tum                                                                       
+Lai Chau                                                                      
+Lam Dong                                                                      
+Lang Son                                                                      
+Lao Cai                                                                       
+Long An           22.532698                                                   
+Nam Dinh          16.891563 38.314702                                         
+Nghe An           18.658427  9.012791 33.643478                               
+Ninh Binh         15.305894 22.385462 29.768912 18.815486                     
+Ninh Thuan        10.866135 32.145550  7.190661 27.749054 23.959601           
+Phu Tho            7.624277 28.164518 10.289067 23.622026 22.136522   5.831646
+Phu Yen           17.611826 30.678737 15.810759 27.820900 32.649809  14.492153
+Quang Binh         9.474935 15.874536 23.750842 15.468035 18.950715  17.758719
+Quang Nam          4.474025 18.908157 20.383572 16.494169 15.561237  14.213360
+Quang Ngai        17.833272 30.846006 15.669489 26.870878 32.405703  14.560635
+Quang Ninh        12.249800 34.614854  8.069009 29.637343 22.462805   6.185475
+Quang Tri         13.122046 17.206324 23.680279 13.323603 23.437681  18.484383
+Soc Trang          5.568492 23.893171 14.907394 20.620660 20.672980   9.956385
+Son La            12.728928 29.790537 11.114536 24.860493 27.057893   9.056053
+Thua Thien Hue    22.005236 43.252386  5.196932 38.480157 34.626579  12.270391
+Tay Ninh          12.735184 27.150993 14.422205 23.108518 27.386276  11.663001
+Thai Binh         18.204310 37.419118  6.633521 32.093613 31.691048   9.889894
+Thai Nguyen       15.329762 36.698666  2.069034 32.267137 28.483567   5.394080
+Thanh Hoa         21.863268 42.021542  6.104949 37.552316 35.472876  11.920671
+Tien Giang        11.641860 24.372411 16.902367 21.659400 26.211526  13.312085
+Tra Vinh           9.513364 17.176135 22.641519 16.189985 20.494782  17.383717
+Tuyen Quang       16.080824 29.648042 15.257641 24.375397 29.598353  13.500000
+Vinh Long          6.718958 26.799644 12.284238 23.643183 21.702986   7.000864
+Vinh Phuc         16.944899 36.379446  5.834732 31.329425 30.590430   7.962217
+Yen Bai            7.874776 26.221129 13.094365 20.738071 21.122692   8.125614
+                    Phu Tho   Phu Yen Quang Binh Quang Nam Quang Ngai
+Ba Ria - Vung Tau                                                    
+Bac Giang                                                            
+Bac Kan                                                              
+Bac Lieu                                                             
+Bac Ninh                                                             
+Ben Tre                                                              
+Binh Dinh                                                            
+Binh Duong                                                           
+Binh Phuoc                                                           
+Binh Thuan                                                           
+Ca Mau                                                               
+Can Tho city                                                         
+Cao Bang                                                             
+Da Nang city                                                         
+Dak Lak                                                              
+Dak Nong                                                             
+Dien Bien                                                            
+Dong Nai                                                             
+Dong Thap                                                            
+Gia Lai                                                              
+Ho Chi Minh city                                                     
+Ha Giang                                                             
+Ha Nam                                                               
+Ha Noi                                                               
+Ha Tinh                                                              
+Hai Duong                                                            
+Hai Phong city                                                       
+Hau Giang                                                            
+Hoa Binh                                                             
+Hung Yen                                                             
+Khanh Hoa                                                            
+Kien Giang                                                           
+Kon Tum                                                              
+Lai Chau                                                             
+Lam Dong                                                             
+Lang Son                                                             
+Lao Cai                                                              
+Long An                                                              
+Nam Dinh                                                             
+Nghe An                                                              
+Ninh Binh                                                            
+Ninh Thuan                                                           
+Phu Tho                                                              
+Phu Yen           12.490140                                          
+Quang Binh        14.257293 17.754200                                
+Quang Nam         10.865215 18.057799   5.250000                     
+Quang Ngai        12.249082  4.250600  19.013637 18.814912           
+Quang Ninh         8.852118 19.759443  20.982240 16.435842  19.446336
+Quang Tri         14.336419 14.746149  10.002205 11.572450  13.995174
+Soc Trang          5.403934 12.540339   9.324210  6.711810  13.306483
+Son La             6.167658  8.606254  17.015240 15.033326   6.782330
+Thua Thien Hue    15.188996 18.515129  28.650473 25.463152  18.286870
+Tay Ninh           7.874319  6.164422  14.532808 13.787313   5.298387
+Thai Binh         10.769406 12.965435  24.089004 21.391064  11.297084
+Thai Nguyen        8.897191 14.805796  21.973766 18.682315  14.934524
+Thanh Hoa         14.702656 15.369479  27.420155 24.860257  15.298500
+Tien Giang         9.117944  7.422675  11.046379 11.373654   8.678992
+Tra Vinh          13.043102 15.940016   3.609557  6.191640  17.155247
+Tuyen Quang       10.684947  8.838693  18.788616 17.731599   5.135377
+Vinh Long          4.582619 12.530028  11.586630  8.663862  13.676564
+Vinh Phuc          9.670491 12.231451  22.705453 20.030979  11.012284
+Yen Bai            4.479118 13.419989  14.056774 10.862799  12.083149
+                  Quang Ninh Quang Tri Soc Trang    Son La Thua Thien Hue
+Ba Ria - Vung Tau                                                        
+Bac Giang                                                                
+Bac Kan                                                                  
+Bac Lieu                                                                 
+Bac Ninh                                                                 
+Ben Tre                                                                  
+Binh Dinh                                                                
+Binh Duong                                                               
+Binh Phuoc                                                               
+Binh Thuan                                                               
+Ca Mau                                                                   
+Can Tho city                                                             
+Cao Bang                                                                 
+Da Nang city                                                             
+Dak Lak                                                                  
+Dak Nong                                                                 
+Dien Bien                                                                
+Dong Nai                                                                 
+Dong Thap                                                                
+Gia Lai                                                                  
+Ho Chi Minh city                                                         
+Ha Giang                                                                 
+Ha Nam                                                                   
+Ha Noi                                                                   
+Ha Tinh                                                                  
+Hai Duong                                                                
+Hai Phong city                                                           
+Hau Giang                                                                
+Hoa Binh                                                                 
+Hung Yen                                                                 
+Khanh Hoa                                                                
+Kien Giang                                                               
+Kon Tum                                                                  
+Lai Chau                                                                 
+Lam Dong                                                                 
+Lang Son                                                                 
+Lao Cai                                                                  
+Long An                                                                  
+Nam Dinh                                                                 
+Nghe An                                                                  
+Ninh Binh                                                                
+Ninh Thuan                                                               
+Phu Tho                                                                  
+Phu Yen                                                                  
+Quang Binh                                                               
+Quang Nam                                                                
+Quang Ngai                                                               
+Quang Ninh                                                               
+Quang Tri          22.422509                                             
+Soc Trang          13.077557 11.635824                                   
+Son La             13.120976 13.559679  9.222933                         
+Thua Thien Hue     12.411994 28.132986 19.726938 14.913403               
+Tay Ninh           16.200275 10.836771  8.201853  4.251223      18.188681
+Thai Binh          12.294393 21.282819 15.436697  7.850102       8.307978
+Thai Nguyen         7.418895 22.254817 13.341758 10.248902       7.013815
+Thanh Hoa          14.072530 26.273553 18.894486 13.192577       4.264376
+Tien Giang         17.774726  9.702041  6.532411  8.326158      20.939534
+Tra Vinh           20.515908  9.335116  7.851115 15.372134      27.338912
+Tuyen Quang        17.578968 12.613580 12.717688  4.936811      18.318365
+Vinh Long          10.741713 14.370251  3.771061  9.222169      17.197081
+Vinh Phuc          11.270067 20.398591 14.285409  7.298657       8.544846
+Yen Bai            11.050905 11.830486  7.144228  6.164617      17.842312
+                   Tay Ninh Thai Binh Thai Nguyen Thanh Hoa Tien Giang
+Ba Ria - Vung Tau                                                     
+Bac Giang                                                             
+Bac Kan                                                               
+Bac Lieu                                                              
+Bac Ninh                                                              
+Ben Tre                                                               
+Binh Dinh                                                             
+Binh Duong                                                            
+Binh Phuoc                                                            
+Binh Thuan                                                            
+Ca Mau                                                                
+Can Tho city                                                          
+Cao Bang                                                              
+Da Nang city                                                          
+Dak Lak                                                               
+Dak Nong                                                              
+Dien Bien                                                             
+Dong Nai                                                              
+Dong Thap                                                             
+Gia Lai                                                               
+Ho Chi Minh city                                                      
+Ha Giang                                                              
+Ha Nam                                                                
+Ha Noi                                                                
+Ha Tinh                                                               
+Hai Duong                                                             
+Hai Phong city                                                        
+Hau Giang                                                             
+Hoa Binh                                                              
+Hung Yen                                                              
+Khanh Hoa                                                             
+Kien Giang                                                            
+Kon Tum                                                               
+Lai Chau                                                              
+Lam Dong                                                              
+Lang Son                                                              
+Lao Cai                                                               
+Long An                                                               
+Nam Dinh                                                              
+Nghe An                                                               
+Ninh Binh                                                             
+Ninh Thuan                                                            
+Phu Tho                                                               
+Phu Yen                                                               
+Quang Binh                                                            
+Quang Nam                                                             
+Quang Ngai                                                            
+Quang Ninh                                                            
+Quang Tri                                                             
+Soc Trang                                                             
+Son La                                                                
+Thua Thien Hue                                                        
+Tay Ninh                                                              
+Thai Binh         11.581174                                           
+Thai Nguyen       13.312434  7.235199                                 
+Thanh Hoa         16.069549  6.880145    7.141435                     
+Tien Giang         4.592385 15.422373   15.511057 18.963344           
+Tra Vinh          12.572923 22.600788   21.013389 26.126186   8.774987
+Tuyen Quang        5.487768 10.342147   14.616980 16.083296   9.848939
+Vinh Long          9.219680 13.964960   10.496495 16.406855   8.373918
+Vinh Phuc         10.937280  2.464325    5.839726  6.715363  14.532312
+Yen Bai            7.880508 11.897378   11.875289 17.088757   9.868353
+                   Tra Vinh Tuyen Quang Vinh Long Vinh Phuc
+Ba Ria - Vung Tau                                          
+Bac Giang                                                  
+Bac Kan                                                    
+Bac Lieu                                                   
+Bac Ninh                                                   
+Ben Tre                                                    
+Binh Dinh                                                  
+Binh Duong                                                 
+Binh Phuoc                                                 
+Binh Thuan                                                 
+Ca Mau                                                     
+Can Tho city                                               
+Cao Bang                                                   
+Da Nang city                                               
+Dak Lak                                                    
+Dak Nong                                                   
+Dien Bien                                                  
+Dong Nai                                                   
+Dong Thap                                                  
+Gia Lai                                                    
+Ho Chi Minh city                                           
+Ha Giang                                                   
+Ha Nam                                                     
+Ha Noi                                                     
+Ha Tinh                                                    
+Hai Duong                                                  
+Hai Phong city                                             
+Hau Giang                                                  
+Hoa Binh                                                   
+Hung Yen                                                   
+Khanh Hoa                                                  
+Kien Giang                                                 
+Kon Tum                                                    
+Lai Chau                                                   
+Lam Dong                                                   
+Lang Son                                                   
+Lao Cai                                                    
+Long An                                                    
+Nam Dinh                                                   
+Nghe An                                                    
+Ninh Binh                                                  
+Ninh Thuan                                                 
+Phu Tho                                                    
+Phu Yen                                                    
+Quang Binh                                                 
+Quang Nam                                                  
+Quang Ngai                                                 
+Quang Ninh                                                 
+Quang Tri                                                  
+Soc Trang                                                  
+Son La                                                     
+Thua Thien Hue                                             
+Tay Ninh                                                   
+Thai Binh                                                  
+Thai Nguyen                                                
+Thanh Hoa                                                  
+Tien Giang                                                 
+Tra Vinh                                                   
+Tuyen Quang       17.088113                                
+Vinh Long         10.821687   13.459276                    
+Vinh Phuc         21.497556   10.309069 12.431718          
+Yen Bai           13.204545    9.079405  7.685890 10.918832</code></pre>
+</div>
+</div>
+</section>
+<section id="non-spatial-hierarchical-clustering" class="level1">
+<h1>Non Spatial Hierarchical Clustering</h1>
+<p>ClustGeo package provides function called hclustgeo() to perform a typical Ward-like hierarchical clustering just like hclust() you learned in previous section.</p>
+<p>To perform non-spatially constrained hierarchical clustering, we only need to provide the function a dissimilarity matrix as shown in the code chunk below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>nongeo_cluster <span class="ot">&lt;-</span> <span class="fu">hclustgeo</span>(proxmat)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nongeo_cluster, <span class="at">cex =</span> <span class="fl">0.5</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rect.hclust</span>(nongeo_cluster, </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">k =</span> <span class="dv">6</span>, </span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">border =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex03_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="mapping-the-clusters-non-spatial" class="level1">
+<h1>Mapping the clusters: Non Spatial</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>groups <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(<span class="fu">cutree</span>(nongeo_cluster, <span class="at">k=</span><span class="dv">6</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>pci_sf_ngeo_cluster <span class="ot">&lt;-</span> <span class="fu">cbind</span>(pci_sf, <span class="fu">as.matrix</span>(groups)) <span class="sc">%&gt;%</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">CLUSTER</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">as.matrix.groups.</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qtm</span>(pci_sf_ngeo_cluster, <span class="st">"CLUSTER"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex03_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="spatially-constrained-hierarchical-clustering" class="level1">
+<h1>Spatially Constrained Hierarchical Clustering</h1>
+<p>Before we can performed spatially constrained hierarchical clustering, a spatial distance matrix will be derived by using st_distance() of sf package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>dist <span class="ot">&lt;-</span> <span class="fu">st_distance</span>(pci_sf, pci_sf)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>distmat <span class="ot">&lt;-</span> <span class="fu">as.dist</span>(dist)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Notice that as.dist() is used to convert the data frame into matrix.</p>
+<p>Next, choicealpha() will be used to determine a suitable value for the mixing parameter alpha as shown in the code chunk below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>cr <span class="ot">&lt;-</span> <span class="fu">choicealpha</span>(proxmat, distmat, <span class="at">range.alpha =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.1</span>), <span class="at">K=</span><span class="dv">6</span>, <span class="at">graph =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex03_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex03_files/figure-html/unnamed-chunk-24-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>With reference to the graphs above, alpha = 0.25 will be used.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>clustG <span class="ot">&lt;-</span> <span class="fu">hclustgeo</span>(proxmat, distmat, <span class="at">alpha =</span> <span class="fl">0.25</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next, cutree() is used to derive the cluster object.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>groups <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(<span class="fu">cutree</span>(clustG, <span class="at">k=</span><span class="dv">6</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Join back the group list with pci_sf polygon feature data frame.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>pci_sf_Gcluster <span class="ot">&lt;-</span> <span class="fu">cbind</span>(pci_sf, <span class="fu">as.matrix</span>(groups)) <span class="sc">%&gt;%</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">CLUSTER</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">as.matrix.groups.</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="mapping-the-clusters-spatially-constrained" class="level1">
+<h1>Mapping the clusters: Spatially Constrained</h1>
+<p>Plot the map of the newly delineated spatially constrained clusters.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qtm</span>(pci_sf_Gcluster, <span class="st">"CLUSTER"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex03_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="protoype" class="level1">
+<h1>Protoype</h1>
+<p>The protoype for the Shiny application should follow as closely as possible the following wireframe:</p>
+<section id="non-spatially-contrained" class="level2">
+<h2 class="anchored" data-anchor-id="non-spatially-contrained">Non Spatially Contrained</h2>
+<p><img src="images/1.jpg" class="img-fluid"></p>
+</section>
+<section id="spatially-constrained" class="level2">
+<h2 class="anchored" data-anchor-id="spatially-constrained">Spatially Constrained</h2>
+<p><img src="images/2.jpg" class="img-fluid"></p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

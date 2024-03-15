@@ -1,0 +1,257 @@
+---
+title: "Take Home Exercise 3 (Hierarchical Clustering)"
+---
+
+# Installing and Loading Packages
+
+The packages below will be used to perform the analysis in this document. If you do not have any of the packages installed, you can install them by running the code below.
+
+```{r}
+
+pacman::p_load(spdep, tmap, sf, ClustGeo, 
+               cluster, tidyverse, sp)
+```
+
+# Data importation and cleaning
+
+We will first load the pci data and boundary date for Vietnam into the environment
+
+```{r}
+#| eval: False
+pci = read_csv("data/pci_2021.csv")
+```
+
+```{r}
+#| eval: False
+vn = st_read(dsn="data" , layer = "vnm_admbnda_adm1_gov_20201027")
+```
+
+lets rename the columns to make them more readable
+
+```{r}
+#| eval: False
+pci <- pci %>% 
+  rename(`overall_index` = `Sub-Index 10: Law & Order`, 
+         `security_ind` = `Good security situation in the province (%)`,
+         `theft_ind` = `Victim of theft or break-in last year (%)`,
+         `police_ind` = `Local police handle firm's case effectively (%)`,
+         `gangster_ind` = `Pay money to gangsters groups (%)`)
+```
+
+Lets check for province names to see if it is consistent with the map naming convention
+
+```{r}
+#| eval: False
+unique(pci$Province)
+```
+
+We notice that some province names are not consistent with the map. We need to fix this.
+
+```{r}
+#| eval: False
+unique(vn$ADM1_EN)
+```
+
+The line of code above show names that are in pci but not in vn
+
+Let's replace these names in pci with the names in vn for us to be able to join the two datasets
+
+```{r}
+#| eval: False
+pci %>% 
+  filter(!Province %in% vn$ADM1_EN) %>% 
+  select(Province)
+```
+
+```{r}
+#| eval: False
+pci <- pci %>% 
+  mutate(Province = case_when(
+    Province == "BRVT" ~ "Ba Ria - Vung Tau",
+    Province == "Can Tho" ~ "Can Tho city",
+    Province == "Da Nang" ~ "Da Nang city",
+    Province == "HCMC" ~ "Ho Chi Minh city",
+    Province == "Hai Phong" ~ "Hai Phong city",
+    Province == "TT-Hue" ~ "Thua Thien Hue",
+    TRUE ~ Province
+  ))
+```
+
+lets check again for province names to see if it is consistent with the map naming convention
+
+```{r}
+#| eval: False
+pci %>% 
+  filter(!Province %in% vn$ADM1_EN) %>% 
+  select(Province)
+```
+
+Looks like we're good to go!
+
+we first need to remove the % sign in the last 4 columns of pci and convert it to integer datatype
+
+```{r}
+#| eval: False
+pci <- pci %>% 
+  mutate(across(ends_with("ind"), ~as.integer(str_remove(., "%"))))
+```
+
+Let us now join the two datasets to get the final dataset of pci_sf with geometry
+
+```{r}
+#| eval: False
+pci_sf <- left_join(pci, 
+                     vn, by=c("Province"="ADM1_EN")) %>% 
+  select(Province, overall_index, security_ind, theft_ind, police_ind, gangster_ind, geometry)
+```
+
+We will now convert the pci_sf to simple feature object
+
+```{r}
+#| eval: False
+pci_sf <- st_as_sf(pci_sf)
+
+```
+
+We will store the files in rds for easy loading in the future
+
+```{r}
+#| eval: False
+write_rds(pci_sf, "data/rds/pci_sf.rds")
+write_rds(vn, "data/rds/vn.rds")
+```
+
+Reading the data for processing
+
+```{r}
+pci_sf <- read_rds("data/rds/pci_sf.rds")
+vn <- read_rds("data/rds/vn.rds")
+
+```
+
+Extracting the clustering variables from the pci_sf simple feature object into data.frame.
+
+```{r}
+
+cluster_vars <- pci_sf %>%
+  st_set_geometry(NULL) %>%
+  select("Province","overall_index", "security_ind", "theft_ind", "police_ind", "gangster_ind")
+head(cluster_vars,10)
+```
+
+We will now delete the Province column and assign rows with province name for dendrogram visualization in later analysis
+
+```{r}
+
+pci_ict <- select(cluster_vars, c(2:6))
+head(pci_ict, 10)
+
+row.names(pci_ict) <- cluster_vars$"Province"
+head(pci_ict,10)
+
+
+```
+
+Computing the proximity matrix
+
+```{r}
+proxmat <- dist(pci_ict, method = 'euclidean')
+
+```
+
+Lets list the content of proxmat for visual inspection.
+
+```{r}
+
+proxmat
+```
+
+# Non Spatial Hierarchical Clustering
+
+ClustGeo package provides function called hclustgeo() to perform a typical Ward-like hierarchical clustering just like hclust() you learned in previous section.
+
+To perform non-spatially constrained hierarchical clustering, we only need to provide the function a dissimilarity matrix as shown in the code chunk below.
+
+```{r}
+nongeo_cluster <- hclustgeo(proxmat)
+plot(nongeo_cluster, cex = 0.5)
+rect.hclust(nongeo_cluster, 
+            k = 6, 
+            border = 2:5)
+```
+
+# Mapping the clusters: Non Spatial
+
+```{r}
+groups <- as.factor(cutree(nongeo_cluster, k=6))
+
+```
+
+```{r}
+pci_sf_ngeo_cluster <- cbind(pci_sf, as.matrix(groups)) %>%
+  rename(`CLUSTER` = `as.matrix.groups.`)
+
+```
+
+```{r}
+qtm(pci_sf_ngeo_cluster, "CLUSTER")
+```
+
+# Spatially Constrained Hierarchical Clustering
+
+Before we can performed spatially constrained hierarchical clustering, a spatial distance matrix will be derived by using st_distance() of sf package.
+
+```{r}
+dist <- st_distance(pci_sf, pci_sf)
+distmat <- as.dist(dist)
+```
+
+Notice that as.dist() is used to convert the data frame into matrix.
+
+Next, choicealpha() will be used to determine a suitable value for the mixing parameter alpha as shown in the code chunk below.
+
+```{r}
+cr <- choicealpha(proxmat, distmat, range.alpha = seq(0, 1, 0.1), K=6, graph = TRUE)
+
+```
+
+With reference to the graphs above, alpha = 0.25 will be used.
+
+```{r}
+clustG <- hclustgeo(proxmat, distmat, alpha = 0.25)
+```
+
+Next, cutree() is used to derive the cluster object.
+
+```{r}
+groups <- as.factor(cutree(clustG, k=6))
+```
+
+Join back the group list with pci_sf polygon feature data frame.
+
+```{r}
+
+pci_sf_Gcluster <- cbind(pci_sf, as.matrix(groups)) %>%
+  rename(`CLUSTER` = `as.matrix.groups.`)
+```
+
+# Mapping the clusters: Spatially Constrained
+
+Plot the map of the newly delineated spatially constrained clusters.
+
+```{r}
+qtm(pci_sf_Gcluster, "CLUSTER")
+
+```
+
+# Protoype
+
+The protoype for the Shiny application should follow as closely as possible the following wireframe:
+
+## Non Spatially Contrained
+
+![](images/1.jpg)
+
+## Spatially Constrained
+
+![](images/2.jpg)
