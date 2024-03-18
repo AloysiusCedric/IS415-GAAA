@@ -12,7 +12,6 @@ execute:
 date: "`r Sys.Date()`"
 ---
 
-
 ```{r}
 pacman::p_load(sf, spdep, GWmodel, 
                SpatialML, tmap, 
@@ -26,7 +25,6 @@ Read the input data sets. It is in simple feature data frame
 ```{r}
 rs_sf <- read_rds("data/rds/HDB_resale.rds")
 ```
-
 
 ```{r}
 set.seed(1234)
@@ -46,7 +44,6 @@ test_df <- test_sf %>%
   st_drop_geometry() %>%
   as.data.frame()
 ```
-
 
 Computing Correlation Martix
 
@@ -190,14 +187,11 @@ vi < vi %>%
 #  geom_bar(stat="identity")
 ```
 
-
 ```{r}
 rs_grf <- read_rds("data/models/rs_grf.rds")
 ```
 
-
 predict.grf() is a vector
-
 
 ```{r}
 grf_pred <-read_rds("data/models/grf_pred.rds")
@@ -212,7 +206,7 @@ test_pred <- test_df %>%
   cbind(grf_pred_df)
 ```
 
-predict the random forest 
+predict the random forest
 
 ```{r}
 rf_pred <- predict(rs_rf,test_df)
@@ -253,7 +247,6 @@ mc <- test_pred %>%
   
 ```
 
-
 ```{r}
 ggplot(data = test_pred,
        aes(x = grf_pred,
@@ -261,7 +254,6 @@ ggplot(data = test_pred,
   geom_point()
 
 ```
-
 
 ```{r}
 ggplot(data = test_pred,
